@@ -7,31 +7,32 @@ import { getMatchTypeById } from '../data/matchTypes.js';
 import { getThreePillars, analyzeCompatibility, WUXING } from '../data/bazi.js';
 import { Navbar, MessageBubble, BottomActionBar } from '../components/Common.js';
 import { typewriter } from '../scripts/utils.js';
+import { analysisApi, testApi } from '../services/api.js';
 
 export class ResultPage {
-    constructor(params) {
-        this.method = params.id; // 'birthday' or 'tarot'
-        this.testData = window.appState.get('currentTest');
+  constructor(params) {
+    this.method = params.id; // 'birthday' or 'tarot'
+    this.testData = window.appState.get('currentTest');
 
-        if (!this.testData) {
-            window.router.navigate('/');
-            return;
-        }
-
-        this.matchType = getMatchTypeById(this.testData.type);
-        this.result = null;
-        this.isAnalyzing = true;
+    if (!this.testData) {
+      window.router.navigate('/');
+      return;
     }
 
-    render() {
-        return `
+    this.matchType = getMatchTypeById(this.testData.type);
+    this.result = null;
+    this.isAnalyzing = true;
+  }
+
+  render() {
+    return `
       <div class="page result-page">
         ${Navbar({
-            title: '分析结果',
-            showBack: true,
-            showHistory: false,
-            showProfile: false
-        })}
+      title: '分析结果',
+      showBack: true,
+      showHistory: false,
+      showProfile: false
+    })}
         
         <main class="page-content">
           <div class="app-container">
@@ -59,10 +60,10 @@ export class ResultPage {
         ${this.renderBottomBar()}
       </div>
     `;
-    }
+  }
 
-    renderAnalyzing() {
-        return `
+  renderAnalyzing() {
+    return `
       <div class="analyzing-state animate-fade-in-up">
         <!-- AI头像消息 -->
         <div class="message message--ai">
@@ -99,17 +100,17 @@ export class ResultPage {
         </div>
       </div>
     `;
-    }
+  }
 
-    renderResult() {
-        if (!this.result) return '';
+  renderResult() {
+    if (!this.result) return '';
 
-        const { score, conclusion, details, personA, personB } = this.result;
+    const { score, conclusion, details, personA, personB } = this.result;
 
-        // 根据分数确定结论类型
-        const conclusionType = this.getConclusionType(score);
+    // 根据分数确定结论类型
+    const conclusionType = this.getConclusionType(score);
 
-        return `
+    return `
       <div class="result-content animate-fade-in-up">
         <!-- 匹配分数 -->
         <div class="glass-card score-card mb-4">
@@ -178,12 +179,12 @@ export class ResultPage {
         </div>
       </div>
     `;
-    }
+  }
 
-    renderBaziDetails() {
-        const { personA, personB, pillarsA, pillarsB } = this.result;
+  renderBaziDetails() {
+    const { personA, personB, pillarsA, pillarsB } = this.result;
 
-        return `
+    return `
       <div class="bazi-comparison">
         <!-- 人物A -->
         <div class="person-bazi">
@@ -218,10 +219,10 @@ export class ResultPage {
         </div>
       </div>
     `;
-    }
+  }
 
-    renderPillars(pillars) {
-        return `
+  renderPillars(pillars) {
+    return `
       <div class="pillars-row">
         <div class="pillar">
           <span class="pillar-label">年柱</span>
@@ -237,10 +238,10 @@ export class ResultPage {
         </div>
       </div>
     `;
-    }
+  }
 
-    renderElements(elements) {
-        return `
+  renderElements(elements) {
+    return `
       <div class="elements-bar">
         ${Object.entries(elements.distribution).map(([element, count]) => `
           <div class="element-item">
@@ -251,12 +252,12 @@ export class ResultPage {
         `).join('')}
       </div>
     `;
-    }
+  }
 
-    renderHexagramDetails() {
-        const { hexagram } = this.testData;
+  renderHexagramDetails() {
+    const { hexagram } = this.testData;
 
-        return `
+    return `
       <div class="hexagram-display">
         <div class="hexagram-main">
           <div class="hexagram-symbol text-center">
@@ -286,42 +287,42 @@ export class ResultPage {
         ` : ''}
       </div>
     `;
+  }
+
+  getConclusionType(score) {
+    if (score >= 80) {
+      return {
+        class: 'conclusion--excellent',
+        icon: '🌟',
+        title: 'A和B互利'
+      };
+    } else if (score >= 60) {
+      return {
+        class: 'conclusion--good',
+        icon: '👍',
+        title: score > 70 ? 'A利B，B不利A' : 'A不利B，B利A'
+      };
+    } else if (score >= 40) {
+      return {
+        class: 'conclusion--neutral',
+        icon: '⚖️',
+        title: 'A和B相互不利'
+      };
+    } else {
+      return {
+        class: 'conclusion--caution',
+        icon: '⚠️',
+        title: 'A和B相互不利'
+      };
+    }
+  }
+
+  renderBottomBar() {
+    if (this.isAnalyzing) {
+      return '';
     }
 
-    getConclusionType(score) {
-        if (score >= 80) {
-            return {
-                class: 'conclusion--excellent',
-                icon: '🌟',
-                title: 'A和B互利'
-            };
-        } else if (score >= 60) {
-            return {
-                class: 'conclusion--good',
-                icon: '👍',
-                title: score > 70 ? 'A利B，B不利A' : 'A不利B，B利A'
-            };
-        } else if (score >= 40) {
-            return {
-                class: 'conclusion--neutral',
-                icon: '⚖️',
-                title: 'A和B相互不利'
-            };
-        } else {
-            return {
-                class: 'conclusion--caution',
-                icon: '⚠️',
-                title: 'A和B相互不利'
-            };
-        }
-    }
-
-    renderBottomBar() {
-        if (this.isAnalyzing) {
-            return '';
-        }
-
-        return `
+    return `
       <div class="bottom-action-bar safe-area-bottom">
         <div class="action-bar__buttons">
           <button class="btn btn--secondary" data-action="share">
@@ -333,236 +334,236 @@ export class ResultPage {
         </div>
       </div>
     `;
+  }
+
+  attachEvents() {
+    // 返回按钮
+    const backBtn = document.querySelector('.navbar__back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        window.router.navigate('/');
+      });
     }
 
-    attachEvents() {
-        // 返回按钮
-        const backBtn = document.querySelector('.navbar__back-btn');
-        if (backBtn) {
-            backBtn.addEventListener('click', () => {
-                window.router.navigate('/');
-            });
-        }
-
-        // 分享按钮
-        const shareBtn = document.querySelector('[data-action="share"]');
-        if (shareBtn) {
-            shareBtn.addEventListener('click', () => {
-                this.handleShare();
-            });
-        }
-
-        // 再测一次按钮
-        const newTestBtn = document.querySelector('[data-action="new-test"]');
-        if (newTestBtn) {
-            newTestBtn.addEventListener('click', () => {
-                window.router.navigate('/');
-            });
-        }
+    // 分享按钮
+    const shareBtn = document.querySelector('[data-action="share"]');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        this.handleShare();
+      });
     }
 
-    async init() {
-        if (!this.testData) return;
+    // 再测一次按钮
+    const newTestBtn = document.querySelector('[data-action="new-test"]');
+    if (newTestBtn) {
+      newTestBtn.addEventListener('click', () => {
+        window.router.navigate('/');
+      });
+    }
+  }
 
-        // 模拟分析过程
-        await this.simulateAnalysis();
+  async init() {
+    if (!this.testData) return;
 
-        // 执行实际分析
-        if (this.method === 'birthday') {
-            this.analyzeBirthday();
-        } else {
-            this.analyzeHexagram();
-        }
+    // 模拟分析过程
+    await this.simulateAnalysis();
 
-        // 更新UI
-        this.isAnalyzing = false;
-        this.rerender();
-
-        // 打字机效果显示建议
-        setTimeout(() => {
-            const suggestionEl = document.getElementById('suggestion-text');
-            if (suggestionEl && this.result?.suggestion) {
-                typewriter(suggestionEl, this.result.suggestion, 30);
-            }
-        }, 500);
+    // 执行实际分析
+    if (this.method === 'birthday') {
+      this.analyzeBirthday();
+    } else {
+      this.analyzeHexagram();
     }
 
-    async simulateAnalysis() {
-        const steps = ['1', '2', '3', '4'];
-        const texts = [
-            '正在收集信息...',
-            '正在进行命理计算...',
-            'AI正在分析...',
-            '正在生成报告...'
-        ];
+    // 更新UI
+    this.isAnalyzing = false;
+    this.rerender();
 
-        for (let i = 0; i < steps.length; i++) {
-            await this.delay(800);
+    // 打字机效果显示建议
+    setTimeout(() => {
+      const suggestionEl = document.getElementById('suggestion-text');
+      if (suggestionEl && this.result?.suggestion) {
+        typewriter(suggestionEl, this.result.suggestion, 30);
+      }
+    }, 500);
+  }
 
-            const textEl = document.getElementById('analyzing-text');
-            if (textEl) {
-                textEl.textContent = texts[i];
-            }
+  async simulateAnalysis() {
+    const steps = ['1', '2', '3', '4'];
+    const texts = [
+      '正在收集信息...',
+      '正在进行命理计算...',
+      'AI正在分析...',
+      '正在生成报告...'
+    ];
 
-            const stepEl = document.querySelector(`[data-step="${steps[i]}"]`);
-            if (stepEl) {
-                stepEl.classList.add('active');
-            }
-        }
+    for (let i = 0; i < steps.length; i++) {
+      await this.delay(800);
 
-        await this.delay(500);
+      const textEl = document.getElementById('analyzing-text');
+      if (textEl) {
+        textEl.textContent = texts[i];
+      }
+
+      const stepEl = document.querySelector(`[data-step="${steps[i]}"]`);
+      if (stepEl) {
+        stepEl.classList.add('active');
+      }
     }
 
-    analyzeBirthday() {
-        const { personA, personB } = this.testData;
+    await this.delay(500);
+  }
 
-        // 计算双方三柱
-        const pillarsA = getThreePillars(personA.birthDate);
-        const pillarsB = getThreePillars(personB.birthDate);
+  analyzeBirthday() {
+    const { personA, personB } = this.testData;
 
-        // 分析相合度
-        const compatibility = analyzeCompatibility(pillarsA, pillarsB);
+    // 计算双方三柱
+    const pillarsA = getThreePillars(personA.birthDate);
+    const pillarsB = getThreePillars(personB.birthDate);
 
-        this.result = {
-            personA,
-            personB,
-            pillarsA,
-            pillarsB,
-            score: compatibility.score,
-            conclusion: compatibility.conclusion,
-            details: compatibility.details,
-            suggestion: this.generateSuggestion(compatibility)
-        };
+    // 分析相合度
+    const compatibility = analyzeCompatibility(pillarsA, pillarsB);
+
+    this.result = {
+      personA,
+      personB,
+      pillarsA,
+      pillarsB,
+      score: compatibility.score,
+      conclusion: compatibility.conclusion,
+      details: compatibility.details,
+      suggestion: this.generateSuggestion(compatibility)
+    };
+  }
+
+  analyzeHexagram() {
+    const { hexagram } = this.testData;
+
+    // 基于卦象生成分析结果
+    const score = this.calculateHexagramScore(hexagram);
+
+    this.result = {
+      hexagram,
+      score,
+      conclusion: this.getHexagramConclusion(hexagram, score),
+      details: this.getHexagramDetails(hexagram),
+      suggestion: this.generateHexagramSuggestion(hexagram)
+    };
+  }
+
+  calculateHexagramScore(hexagram) {
+    // 根据卦象计算分数
+    const positiveHexagrams = ['乾', '坤', '泰', '同人', '大有', '谦', '咸', '恒', '益', '萃'];
+    const negativeHexagrams = ['否', '讼', '剥', '困', '蹇', '睽', '明夷'];
+
+    let score = 60; // 基础分
+
+    if (positiveHexagrams.includes(hexagram.name)) {
+      score += 20;
+    } else if (negativeHexagrams.includes(hexagram.name)) {
+      score -= 15;
     }
 
-    analyzeHexagram() {
-        const { hexagram } = this.testData;
-
-        // 基于卦象生成分析结果
-        const score = this.calculateHexagramScore(hexagram);
-
-        this.result = {
-            hexagram,
-            score,
-            conclusion: this.getHexagramConclusion(hexagram, score),
-            details: this.getHexagramDetails(hexagram),
-            suggestion: this.generateHexagramSuggestion(hexagram)
-        };
+    // 变爻影响
+    if (hexagram.hasChanging) {
+      score += hexagram.changingPositions.length <= 2 ? 5 : -5;
     }
 
-    calculateHexagramScore(hexagram) {
-        // 根据卦象计算分数
-        const positiveHexagrams = ['乾', '坤', '泰', '同人', '大有', '谦', '咸', '恒', '益', '萃'];
-        const negativeHexagrams = ['否', '讼', '剥', '困', '蹇', '睽', '明夷'];
+    return Math.max(20, Math.min(95, score));
+  }
 
-        let score = 60; // 基础分
+  getHexagramConclusion(hexagram, score) {
+    if (score >= 75) {
+      return `${hexagram.name}卦显示双方关系积极向好，有互利共赢的趋势。`;
+    } else if (score >= 55) {
+      return `${hexagram.name}卦提示需要双方共同努力，关系可以改善。`;
+    } else {
+      return `${hexagram.name}卦暗示当前时机不太适合，建议谨慎行事。`;
+    }
+  }
 
-        if (positiveHexagrams.includes(hexagram.name)) {
-            score += 20;
-        } else if (negativeHexagrams.includes(hexagram.name)) {
-            score -= 15;
-        }
+  getHexagramDetails(hexagram) {
+    const details = [];
 
-        // 变爻影响
-        if (hexagram.hasChanging) {
-            score += hexagram.changingPositions.length <= 2 ? 5 : -5;
-        }
+    details.push({
+      type: 'positive',
+      title: `${hexagram.name}卦象`,
+      description: hexagram.meaning
+    });
 
-        return Math.max(20, Math.min(95, score));
+    if (hexagram.upper && hexagram.lower) {
+      details.push({
+        type: 'positive',
+        title: '上下卦分析',
+        description: `上卦${hexagram.upper.name}（${hexagram.upper.nature}），下卦${hexagram.lower.name}（${hexagram.lower.nature}）`
+      });
     }
 
-    getHexagramConclusion(hexagram, score) {
-        if (score >= 75) {
-            return `${hexagram.name}卦显示双方关系积极向好，有互利共赢的趋势。`;
-        } else if (score >= 55) {
-            return `${hexagram.name}卦提示需要双方共同努力，关系可以改善。`;
-        } else {
-            return `${hexagram.name}卦暗示当前时机不太适合，建议谨慎行事。`;
-        }
+    if (hexagram.hasChanging) {
+      details.push({
+        type: hexagram.changingPositions.length <= 2 ? 'positive' : 'negative',
+        title: '变爻分析',
+        description: `第${hexagram.changingPositions.join('、')}爻为变爻，表示事情会有变化`
+      });
     }
 
-    getHexagramDetails(hexagram) {
-        const details = [];
+    return details;
+  }
 
-        details.push({
-            type: 'positive',
-            title: `${hexagram.name}卦象`,
-            description: hexagram.meaning
-        });
+  generateSuggestion(compatibility) {
+    const { score, details } = compatibility;
+    const positives = details.filter(d => d.type === 'positive');
+    const negatives = details.filter(d => d.type === 'negative');
 
-        if (hexagram.upper && hexagram.lower) {
-            details.push({
-                type: 'positive',
-                title: '上下卦分析',
-                description: `上卦${hexagram.upper.name}（${hexagram.upper.nature}），下卦${hexagram.lower.name}（${hexagram.lower.nature}）`
-            });
-        }
+    let suggestion = '';
 
-        if (hexagram.hasChanging) {
-            details.push({
-                type: hexagram.changingPositions.length <= 2 ? 'positive' : 'negative',
-                title: '变爻分析',
-                description: `第${hexagram.changingPositions.join('、')}爻为变爻，表示事情会有变化`
-            });
-        }
-
-        return details;
+    if (score >= 80) {
+      suggestion = '这是一段非常好的缘分！双方在性格和命理上高度契合，建议珍惜这份关系，共同维护。注意保持沟通，互相理解和包容。';
+    } else if (score >= 60) {
+      suggestion = '整体关系是积极的，但也存在一些需要注意的地方。';
+      if (negatives.length > 0) {
+        suggestion += `特别是${negatives[0].title}方面，需要双方多一些耐心和理解。`;
+      }
+      suggestion += '只要用心经营，这段关系会越来越好。';
+    } else if (score >= 40) {
+      suggestion = '双方存在一定的冲突，但并非不可调和。建议：1) 增加沟通频率；2) 尊重对方的差异；3) 寻找共同兴趣。如果双方都愿意付出努力，关系是可以改善的。';
+    } else {
+      suggestion = '从命理角度看，双方确实存在较大的冲突。建议在做重要决定前，多观察、多了解对方。如果是合作关系，建议寻找其他机会；如果是感情关系，请谨慎考虑。';
     }
 
-    generateSuggestion(compatibility) {
-        const { score, details } = compatibility;
-        const positives = details.filter(d => d.type === 'positive');
-        const negatives = details.filter(d => d.type === 'negative');
+    return suggestion;
+  }
 
-        let suggestion = '';
+  generateHexagramSuggestion(hexagram) {
+    return `${hexagram.name}卦的核心含义是"${hexagram.meaning}"。根据卦象提示，当前最重要的是保持平和的心态，不要急于求成。遇事多思考，听从内心的指引。如果有变爻，说明事情会有转机，保持耐心等待合适的时机。`;
+  }
 
-        if (score >= 80) {
-            suggestion = '这是一段非常好的缘分！双方在性格和命理上高度契合，建议珍惜这份关系，共同维护。注意保持沟通，互相理解和包容。';
-        } else if (score >= 60) {
-            suggestion = '整体关系是积极的，但也存在一些需要注意的地方。';
-            if (negatives.length > 0) {
-                suggestion += `特别是${negatives[0].title}方面，需要双方多一些耐心和理解。`;
-            }
-            suggestion += '只要用心经营，这段关系会越来越好。';
-        } else if (score >= 40) {
-            suggestion = '双方存在一定的冲突，但并非不可调和。建议：1) 增加沟通频率；2) 尊重对方的差异；3) 寻找共同兴趣。如果双方都愿意付出努力，关系是可以改善的。';
-        } else {
-            suggestion = '从命理角度看，双方确实存在较大的冲突。建议在做重要决定前，多观察、多了解对方。如果是合作关系，建议寻找其他机会；如果是感情关系，请谨慎考虑。';
-        }
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-        return suggestion;
+  rerender() {
+    const container = document.getElementById('app');
+    container.innerHTML = this.render();
+    this.attachEvents();
+  }
+
+  handleShare() {
+    const shareText = `我刚刚在 MasterXiao AI 进行了${this.matchType?.title}测试，匹配度${this.result?.score}%！快来试试吧~`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'MasterXiao AI 匹配分析',
+        text: shareText,
+        url: window.location.origin
+      });
+    } else {
+      // 复制到剪贴板
+      navigator.clipboard.writeText(shareText).then(() => {
+        window.showToast('链接已复制，快去分享吧！');
+      });
     }
-
-    generateHexagramSuggestion(hexagram) {
-        return `${hexagram.name}卦的核心含义是"${hexagram.meaning}"。根据卦象提示，当前最重要的是保持平和的心态，不要急于求成。遇事多思考，听从内心的指引。如果有变爻，说明事情会有转机，保持耐心等待合适的时机。`;
-    }
-
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    rerender() {
-        const container = document.getElementById('app');
-        container.innerHTML = this.render();
-        this.attachEvents();
-    }
-
-    handleShare() {
-        const shareText = `我刚刚在 MasterXiao AI 进行了${this.matchType?.title}测试，匹配度${this.result?.score}%！快来试试吧~`;
-
-        if (navigator.share) {
-            navigator.share({
-                title: 'MasterXiao AI 匹配分析',
-                text: shareText,
-                url: window.location.origin
-            });
-        } else {
-            // 复制到剪贴板
-            navigator.clipboard.writeText(shareText).then(() => {
-                window.showToast('链接已复制，快去分享吧！');
-            });
-        }
-    }
+  }
 }
 
 export default ResultPage;
