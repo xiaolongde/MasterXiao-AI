@@ -1,13 +1,180 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>master-xiao-ai</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#8B7FD8">
+
+  <!-- SEO -->
+  <title>MasterXiao AI - 智能命理匹配分析平台</title>
+  <meta name="description" content="MasterXiao AI 提供感情匹配、职场关系、城市发展等多维度命理分析服务，让星辰为你指引前路。">
+  <meta name="keywords" content="感情匹配,职场关系,塔罗牌,命理分析,八字匹配,城市匹配">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="MasterXiao AI - 智能命理匹配分析">
+  <meta property="og:description" content="发现你的命运连接，让星辰为你指引前路。">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/vite.svg">
+
+  <!-- 样式 -->
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- 导航栏 -->
+    <nav class="navbar">
+      <div class="navbar__logo">MasterXiao</div>
+      <div class="navbar__actions">
+        <button class="navbar__icon-btn" title="历史记录">🕐</button>
+        <button class="navbar__icon-btn" title="个人中心">👤</button>
+      </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="page">
+      <div class="app-container">
+
+        <!-- 欢迎横幅 -->
+        <section class="mt-6 mb-6">
+          <div class="glass-card text-center animate-fade-in-up">
+            <div style="font-size: 48px; margin-bottom: 12px;" class="animate-float">🔮</div>
+            <h1 class="heading-1 mb-2">发现你的命运连接</h1>
+            <p class="body-text-secondary mb-4">让星辰为你指引前路</p>
+            <button class="btn btn--primary btn--lg">
+              <span>✨</span>
+              <span>开始占卜</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 场景占卜标题 -->
+        <section class="mb-4">
+          <h2 class="heading-2 text-center" style="color: var(--color-text-secondary);">场景占卜</h2>
+        </section>
+
+        <!-- 功能卡片列表 -->
+        <section class="flex flex-col gap-3">
+
+          <!-- 感情匹配 -->
+          <div
+            class="glass-card glass-card--interactive feature-card animate-fade-in-up animate-delay-100 animate-hidden">
+            <div class="feature-card__icon">💑</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">感情匹配</h3>
+              <p class="feature-card__description">预知你的正缘何时降临</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- 职场关系 -->
+          <div
+            class="glass-card glass-card--interactive feature-card animate-fade-in-up animate-delay-200 animate-hidden">
+            <div class="feature-card__icon">💼</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">职场关系</h3>
+              <p class="feature-card__description">解析职场人际关系</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- 合作关系 -->
+          <div
+            class="glass-card glass-card--interactive feature-card animate-fade-in-up animate-delay-300 animate-hidden">
+            <div class="feature-card__icon">🤝</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">合作关系</h3>
+              <p class="feature-card__description">看清合作对象，早做决定</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- TA的想法 -->
+          <div
+            class="glass-card glass-card--interactive feature-card animate-fade-in-up animate-delay-400 animate-hidden">
+            <div class="feature-card__icon">💭</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">TA的想法和态度</h3>
+              <p class="feature-card__description">揭开TA的真实想法</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- 职业发展 -->
+          <div
+            class="glass-card glass-card--interactive feature-card animate-fade-in-up animate-delay-500 animate-hidden">
+            <div class="feature-card__icon">📈</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">职业发展</h3>
+              <p class="feature-card__description">找到最适合你的职业方向</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- 城市方向 -->
+          <div class="glass-card glass-card--interactive feature-card">
+            <div class="feature-card__icon">🗺️</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">城市方向</h3>
+              <p class="feature-card__description">哪座城市是你的命运之地</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- 桃花运势 -->
+          <div class="glass-card glass-card--interactive feature-card">
+            <div class="feature-card__icon">🌸</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">桃花运势</h3>
+              <p class="feature-card__description">桃花何时盛开</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- 贵人匹配 -->
+          <div class="glass-card glass-card--interactive feature-card">
+            <div class="feature-card__icon">⭐</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">贵人匹配</h3>
+              <p class="feature-card__description">谁是你生命中的贵人</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- Yes or No -->
+          <div class="glass-card glass-card--interactive feature-card">
+            <div class="feature-card__icon">❓</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">Yes or No</h3>
+              <p class="feature-card__description">犹豫时，快速帮你判断</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+          <!-- 二选一 -->
+          <div class="glass-card glass-card--interactive feature-card">
+            <div class="feature-card__icon">⚖️</div>
+            <div class="feature-card__content">
+              <h3 class="feature-card__title">二选一</h3>
+              <p class="feature-card__description">左右为难？帮你稳妥选对</p>
+            </div>
+            <span class="feature-card__arrow">→</span>
+          </div>
+
+        </section>
+
+        <!-- 底部间距 -->
+        <div class="mt-8"></div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- 主脚本 -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>

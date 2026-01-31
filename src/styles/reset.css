@@ -1,0 +1,219 @@
+/**
+ * MasterXiao-AI 设计系统 - 样式重置
+ * 基于 modern-normalize 优化
+ */
+
+/* Box sizing 规则 */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* 移除默认 margin 和 padding */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* 阻止调整字体大小 */
+html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* 设置核心根默认值 */
+html {
+    font-family: var(--font-family-base);
+    font-size: 16px;
+    line-height: var(--line-height-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+}
+
+/* 设置核心 body 默认值 */
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+    background: var(--gradient-bg);
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
+
+/* 标题标签重置 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    color: var(--color-text-primary);
+}
+
+/* 段落默认值 */
+p {
+    text-wrap: pretty;
+}
+
+/* 避免图片溢出 */
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* 继承表单元素字体 */
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+/* 按钮重置 */
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 链接重置 */
+a {
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 列表重置 */
+ul,
+ol {
+    list-style: none;
+}
+
+/* 表格重置 */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* 文本区域重置 */
+textarea {
+    resize: vertical;
+}
+
+/* fieldset 重置 */
+fieldset {
+    border: none;
+}
+
+/* 隐藏元素 */
+[hidden] {
+    display: none !important;
+}
+
+/* 移除 input type=number 的箭头 */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* 移除 input type=search 的清除按钮 */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+}
+
+/* 禁用状态的光标 */
+[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* 焦点可见时的轮廓 */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* 移除默认焦点轮廓 */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* 选中文本样式 */
+::selection {
+    background-color: var(--color-primary-light);
+    color: var(--color-text-inverse);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(139, 127, 216, 0.3);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 127, 216, 0.5);
+}
+
+/* 占位符样式 */
+::placeholder {
+    color: var(--color-text-tertiary);
+    opacity: 1;
+}
+
+/* 自动填充样式覆盖 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--color-glass-bg) inset;
+    -webkit-text-fill-color: var(--color-text-primary);
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* 防止 iOS 输入框缩放 */
+@media (max-width: 768px) {
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
