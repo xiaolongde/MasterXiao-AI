@@ -15,6 +15,7 @@ import testRoutes from './routes/test.js';
 import analysisRoutes from './routes/analysis.js';
 import verificationRoutes from './routes/verification.js';
 import userRoutes from './routes/user.js';
+import paymentRoutes from './routes/payment.js';
 
 // 中间件导入
 import { errorHandler } from './middleware/errorHandler.js';
@@ -71,6 +72,9 @@ app.use('/api/verification', verificationRoutes);
 
 // 用户路由
 app.use('/api/user', userRoutes);
+
+// 支付路由
+app.use('/api/payment', paymentRoutes);
 
 // ==================== 静态文件服务 ====================
 

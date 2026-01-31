@@ -236,11 +236,61 @@ export const verificationApi = {
     }
 };
 
+// ==================== 支付 API ====================
+
+export const paymentApi = {
+    /**
+     * 创建订单
+     */
+    async createOrder(data) {
+        return request('/payment/create-order', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    },
+
+    /**
+     * 获取订单状态
+     */
+    async getOrderStatus(orderId) {
+        return request(`/payment/order/${orderId}`);
+    },
+
+    /**
+     * 模拟支付（开发环境）
+     */
+    async simulatePay(orderId) {
+        return request('/payment/simulate-pay', {
+            method: 'POST',
+            body: JSON.stringify({ orderId })
+        });
+    },
+
+    /**
+     * 使用核销码
+     */
+    async redeem(redeemCode) {
+        return request('/payment/redeem', {
+            method: 'POST',
+            body: JSON.stringify({ redeemCode })
+        });
+    },
+
+    /**
+     * 获取订单列表
+     */
+    async getOrders() {
+        return request('/payment/orders');
+    }
+};
+
 // 导出默认对象
 export default {
     auth: authApi,
     test: testApi,
     analysis: analysisApi,
     user: userApi,
-    verification: verificationApi
+    verification: verificationApi,
+    payment: paymentApi
 };
+

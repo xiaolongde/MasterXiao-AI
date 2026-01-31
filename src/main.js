@@ -16,7 +16,8 @@ import {
   TestSelectPage,
   BirthdayInputPage,
   TarotPage,
-  ResultPage
+  ResultPage,
+  PaymentPage
 } from './pages/index.js';
 
 /**
@@ -46,6 +47,7 @@ function registerRoutes() {
     .register('/test/:type', TestSelectPage)
     .register('/test/:type/birthday', BirthdayInputPage)
     .register('/test/:type/tarot', TarotPage)
+    .register('/pay/:type', PaymentPage)
     .register('/result/:id', ResultPage);
 }
 
