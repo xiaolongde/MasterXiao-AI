@@ -1,6 +1,6 @@
-# 🔮 MasterXiao-AI
+# ✨ 匹配游戏
 
-智能命理匹配分析平台 - 发现你的命运连接，让星辰为你指引前路。
+智能性格匹配分析平台 - 发现你的性格契合度，探索人际关系的奥秘。
 
 ![Version](https://img.shields.io/badge/version-1.0.0-purple)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -10,20 +10,20 @@
 ## ✨ 功能特性
 
 ### 🎯 10种匹配分析
-- 💑 感情匹配 - 预知你的正缘何时降临
+- 💑 感情匹配 - 测试你们的性格契合度
 - 💼 职场关系 - 分析老板/同事/合作伙伴关系
 - 🏙️ 城市发展 - 找到最适合你发展的城市
 - 👨‍👩‍👧 亲子关系 - 理解孩子，改善亲子关系
 - 🤝 合伙人匹配 - 分析创业合伙人契合度
 - 🏠 室友匹配 - 找到完美的合租室友
 - 🎓 师生匹配 - 了解最适合你的老师类型
-- 💕 朋友匹配 - 发现真正的灵魂挚友
+- 💕 朋友匹配 - 发现真正的知心好友
 - 🐾 宠物匹配 - 选择最适合你的宠物伴侣
 - 🎮 游戏队友 - 找到配合默契的游戏搭档
 
 ### 📊 两种测试方式
-1. **生日匹配** - 基于八字三柱的深度分析
-2. **六爻塔罗** - 基于传统占卜的直觉分析
+1. **生日匹配** - 基于生日特质的深度分析
+2. **直觉卡牌** - 基于直觉选择的趣味分析
 
 ### 💳 支付系统
 - 支持支付宝/微信扫码支付
@@ -35,7 +35,7 @@
 ## 🚀 快速开始
 
 ### 环境要求
-- Node.js 18+
+- Node.js 20+
 - npm 9+
 
 ### 安装
@@ -74,21 +74,34 @@ npm run start
 ## 📁 项目结构
 
 ```
-MasterXiao-AI/
-├── src/                       # 前端源码
-│   ├── main.js                # 主入口
-│   ├── styles/                # 样式系统
-│   ├── scripts/               # 核心脚本
-│   ├── components/            # UI 组件
-│   ├── pages/                 # 页面组件
-│   ├── data/                  # 数据模块
-│   └── services/              # API 服务
+匹配游戏/
+├── web/                       # Web 前端
+│   ├── client/                # 用户端前端
+│   │   ├── src/               # 源码
+│   │   │   ├── main.js        # 主入口
+│   │   │   ├── styles/        # 样式系统
+│   │   │   ├── scripts/       # 核心脚本
+│   │   │   ├── components/    # UI 组件
+│   │   │   ├── pages/         # 页面组件
+│   │   │   ├── data/          # 数据模块
+│   │   │   └── services/      # API 服务
+│   │   ├── dist/              # 构建输出
+│   │   ├── index.html         # 入口页面
+│   │   └── vite.config.js     # Vite 配置
+│   │
+│   └── backend/               # 管理后台
+│       ├── css/               # 后台样式
+│       ├── js/                # 后台脚本
+│       ├── index.html         # 后台首页
+│       └── login.html         # 登录页面
 │
-├── server/                    # 后端源码
+├── server/                    # 后端 API
 │   ├── index.js               # Express 入口
+│   ├── config/                # 配置文件
 │   ├── middleware/            # 中间件
 │   ├── routes/                # API 路由
-│   └── services/              # 业务服务
+│   ├── services/              # 业务服务
+│   └── utils/                 # 工具函数
 │
 └── docs/                      # 项目文档
 ```
@@ -129,7 +142,7 @@ MasterXiao-AI/
 | 接口 | 方法 | 描述 |
 |------|------|------|
 | `/api/analysis/birthday` | POST | 生日匹配分析 |
-| `/api/analysis/hexagram` | POST | 六爻卦象分析 |
+| `/api/analysis/hexagram` | POST | 卡牌符号分析 |
 
 ### 支付
 | 接口 | 方法 | 描述 |
@@ -175,7 +188,7 @@ JWT_SECRET=your-secret-key
 
 ## 📄 许可证
 
-MIT License © 2026 MasterXiao-AI
+MIT License © 2026 匹配游戏
 
 ---
 

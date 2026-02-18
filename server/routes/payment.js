@@ -1,6 +1,7 @@
 /**
  * 支付路由
  * 处理下单、支付和核销
+ * 订单写入数据库（client_orders 表），订单ID使用 uuid.v4 保证唯一
  */
 
 import express from 'express';
@@ -9,13 +10,14 @@ import { asyncHandler, AppError } from '../middleware/errorHandler.js';
 import { optionalAuth, authenticate } from '../middleware/auth.js';
 import { orders, users } from '../services/dataStore.js';
 import { generateQRCode, generateRedeemCode } from '../services/paymentService.js';
+import { getNowLocal } from '../database/index.js';
 
 const router = express.Router();
 
 // 商品价格配置
 const PRODUCTS = {
     'test-basic': { price: 19.9, name: '基础测试', credits: 1 },
-    'test-standard': { price: 29.9, name: '标准测试', credits: 1 },
+    'test-standard': { price: 19.9, name: '标准测试', credits: 1 },
     'test-premium': { price: 49.9, name: '高级测试', credits: 3 },
     'credits-5': { price: 88, name: '5次测试包', credits: 5 },
     'credits-10': { price: 168, name: '10次测试包', credits: 10 }
@@ -23,7 +25,8 @@ const PRODUCTS = {
 
 /**
  * POST /api/payment/create-order
- * 创建订单并生成支付二维码
+ * 创建预订单并生成支付二维码
+ * 订单ID使用 uuid.v4，初始状态为 paying（支付中）
  */
 router.post('/create-order', optionalAuth, asyncHandler(async (req, res) => {
     const { productId, paymentMethod, testType } = req.body;
@@ -32,8 +35,8 @@ router.post('/create-order', optionalAuth, asyncHandler(async (req, res) => {
         throw new AppError('缺少必要参数', 400, 'MISSING_FIELDS');
     }
 
-    if (!['alipay', 'wechat'].includes(paymentMethod)) {
-        throw new AppError('不支持的支付方式', 400, 'INVALID_PAYMENT_METHOD');
+    if (paymentMethod !== 'alipay') {
+        throw new AppError('目前仅支持支付宝支付', 400, 'INVALID_PAYMENT_METHOD');
     }
 
     const product = PRODUCTS[productId];
@@ -41,8 +44,16 @@ router.post('/create-order', optionalAuth, asyncHandler(async (req, res) => {
         throw new AppError('商品不存在', 404, 'PRODUCT_NOT_FOUND');
     }
 
-    // 创建订单
-    const orderId = generateOrderId();
+    // 使用 uuid.v4 生成唯一订单ID
+    const orderId = uuidv4();
+
+    // 30分钟后过期
+    const expiresAt = (() => {
+        const d = new Date(Date.now() + 30 * 60 * 1000 + 8 * 60 * 60 * 1000);
+        return d.toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+    })();
+
+    // 创建预订单，初始状态为 paying（支付中）
     const order = {
         id: orderId,
         userId: req.user?.userId || null,
@@ -52,22 +63,32 @@ router.post('/create-order', optionalAuth, asyncHandler(async (req, res) => {
         credits: product.credits,
         paymentMethod,
         testType: testType || null,
-        status: 'pending', // pending, paid, redeemed, expired, cancelled
+        status: 'paying',  // 初始状态：支付中
         redeemCode: null,
-        createdAt: new Date().toISOString(),
+        paymentId: null,
+        createdAt: getNowLocal(),
         paidAt: null,
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30分钟过期
+        redeemedAt: null,
+        expiresAt
     };
 
+    // 写入数据库
     orders.set(orderId, order);
 
+    console.log(`[${global.getTimestamp()}] 📝 创建预订单: ${orderId}, 商品: ${product.name}, 金额: ¥${product.price}, 状态: paying`);
+
     // 生成支付二维码
-    const qrCodeData = await generateQRCode({
-        orderId,
-        amount: product.price,
-        productName: product.name,
-        paymentMethod
-    });
+    let qrCodeData = null;
+    try {
+        qrCodeData = await generateQRCode({
+            orderId,
+            amount: product.price,
+            productName: product.name,
+            paymentMethod
+        });
+    } catch (err) {
+        console.warn(`[${global.getTimestamp()}] ⚠️ 生成二维码失败: ${err.message}`);
+    }
 
     res.json({
         success: true,
@@ -76,8 +97,9 @@ router.post('/create-order', optionalAuth, asyncHandler(async (req, res) => {
             amount: product.price,
             productName: product.name,
             paymentMethod,
-            qrCode: qrCodeData.qrCode,
-            paymentUrl: qrCodeData.paymentUrl,
+            status: 'paying',
+            qrCode: qrCodeData?.qrCode || null,
+            paymentUrl: qrCodeData?.paymentUrl || null,
             expiresAt: order.expiresAt
         }
     });
@@ -86,6 +108,7 @@ router.post('/create-order', optionalAuth, asyncHandler(async (req, res) => {
 /**
  * GET /api/payment/order/:orderId
  * 查询订单状态
+ * 支持轮询，会自动检测过期订单
  */
 router.get('/order/:orderId', optionalAuth, asyncHandler(async (req, res) => {
     const { orderId } = req.params;
@@ -95,6 +118,16 @@ router.get('/order/:orderId', optionalAuth, asyncHandler(async (req, res) => {
         throw new AppError('订单不存在', 404, 'ORDER_NOT_FOUND');
     }
 
+    // 自动检测订单是否过期（仅对 paying 状态的订单）
+    if (order.status === 'paying' && order.expiresAt) {
+        const now = getNowLocal();
+        if (now > order.expiresAt) {
+            order.status = 'expired';
+            orders.set(orderId, order);
+            console.log(`[${global.getTimestamp()}] ⏰ 订单 ${orderId} 已过期`);
+        }
+    }
+
     res.json({
         success: true,
         data: {
@@ -102,8 +135,11 @@ router.get('/order/:orderId', optionalAuth, asyncHandler(async (req, res) => {
             status: order.status,
             amount: order.amount,
             productName: order.productName,
+            paymentMethod: order.paymentMethod,
             redeemCode: order.status === 'paid' ? order.redeemCode : null,
-            paidAt: order.paidAt
+            createdAt: order.createdAt,
+            paidAt: order.paidAt,
+            expiresAt: order.expiresAt
         }
     });
 }));
@@ -116,7 +152,7 @@ router.get('/order/:orderId', optionalAuth, asyncHandler(async (req, res) => {
 router.post('/notify', asyncHandler(async (req, res) => {
     const { orderId, paymentId, status } = req.body;
 
-    console.log('📥 收到支付回调:', { orderId, paymentId, status });
+    console.log(`[${global.getTimestamp()}] 📥 收到支付回调:`, { orderId, paymentId, status });
 
     const order = orders.get(orderId);
 
@@ -124,14 +160,14 @@ router.post('/notify', asyncHandler(async (req, res) => {
         return res.send('FAIL');
     }
 
-    if (order.status !== 'pending') {
-        return res.send('SUCCESS'); // 已处理过
+    if (order.status !== 'paying') {
+        return res.send('SUCCESS'); // 已处理过或非支付中状态
     }
 
     if (status === 'success') {
         // 更新订单状态
         order.status = 'paid';
-        order.paidAt = new Date().toISOString();
+        order.paidAt = getNowLocal();
         order.paymentId = paymentId;
 
         // 生成核销码
@@ -141,14 +177,16 @@ router.post('/notify', asyncHandler(async (req, res) => {
 
         // 如果有关联用户，增加积分
         if (order.userId) {
-            const user = Array.from(users.values()).find(u => u.id === order.userId);
+            const allUsers = users.values();
+            const user = allUsers.find(u => u.id === order.userId);
             if (user) {
                 user.credits = (user.credits || 0) + order.credits;
-                console.log(`✅ 用户 ${user.phone} 增加 ${order.credits} 次测试机会`);
+                users.set(user.phone, user);
+                console.log(`[${global.getTimestamp()}] ✅ 用户 ${user.phone} 增加 ${order.credits} 次测试机会`);
             }
         }
 
-        console.log(`✅ 订单 ${orderId} 支付成功，核销码: ${order.redeemCode}`);
+        console.log(`[${global.getTimestamp()}] ✅ 订单 ${orderId} 支付成功，核销码: ${order.redeemCode}`);
     }
 
     res.send('SUCCESS');
@@ -171,13 +209,13 @@ router.post('/simulate-pay', asyncHandler(async (req, res) => {
         throw new AppError('订单不存在', 404, 'ORDER_NOT_FOUND');
     }
 
-    if (order.status !== 'pending') {
-        throw new AppError('订单状态异常', 400, 'INVALID_ORDER_STATUS');
+    if (order.status !== 'paying') {
+        throw new AppError('订单状态异常，当前状态: ' + order.status, 400, 'INVALID_ORDER_STATUS');
     }
 
     // 更新订单状态
     order.status = 'paid';
-    order.paidAt = new Date().toISOString();
+    order.paidAt = getNowLocal();
     order.paymentId = 'SIM_' + Date.now();
 
     // 生成核销码
@@ -187,13 +225,15 @@ router.post('/simulate-pay', asyncHandler(async (req, res) => {
 
     // 如果有关联用户，增加积分
     if (order.userId) {
-        const user = Array.from(users.values()).find(u => u.id === order.userId);
+        const allUsers = users.values();
+        const user = allUsers.find(u => u.id === order.userId);
         if (user) {
             user.credits = (user.credits || 0) + order.credits;
+            users.set(user.phone, user);
         }
     }
 
-    console.log(`✅ 模拟支付成功，订单: ${orderId}，核销码: ${order.redeemCode}`);
+    console.log(`[${global.getTimestamp()}] ✅ 模拟支付成功，订单: ${orderId}，核销码: ${order.redeemCode}`);
 
     res.json({
         success: true,
@@ -231,7 +271,7 @@ router.post('/redeem', optionalAuth, asyncHandler(async (req, res) => {
 
     // 标记为已核销
     targetOrder.status = 'redeemed';
-    targetOrder.redeemedAt = new Date().toISOString();
+    targetOrder.redeemedAt = getNowLocal();
     orders.set(targetOrder.id, targetOrder);
 
     res.json({
@@ -275,14 +315,5 @@ router.get('/orders', authenticate, asyncHandler(async (req, res) => {
         }
     });
 }));
-
-/**
- * 生成订单号
- */
-function generateOrderId() {
-    const timestamp = Date.now().toString(36).toUpperCase();
-    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-    return `MX${timestamp}${random}`;
-}
 
 export default router;

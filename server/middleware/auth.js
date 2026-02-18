@@ -5,7 +5,7 @@
 import jwt from 'jsonwebtoken';
 import { AppError } from './errorHandler.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'masterxiao-secret-key-2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'matching-game-secret-key-2024';
 
 export function authenticate(req, res, next) {
     const authHeader = req.headers.authorization;

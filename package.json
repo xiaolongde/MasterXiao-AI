@@ -1,26 +1,40 @@
 {
-  "name": "master-xiao-ai",
+  "name": "matching-game",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "vite --config web/client/vite.config.js web/client",
+    "dev:mobile": "vite --config web/client/vite.config.js web/client --host",
+    "build": "vite build --config web/client/vite.config.js web/client",
+    "preview": "vite preview --config web/client/vite.config.js web/client",
     "server": "node server/index.js",
     "server:dev": "node --watch server/index.js",
-    "start": "npm run server"
+    "server:prod": "node server/index.js",
+    "start": "npm run server",
+    "start:dev": "cross-env NODE_ENV=development node server/index.js",
+    "start:prod": "cross-env NODE_ENV=production node server/index.js",
+    "pm2:start": "cross-env NODE_ENV=production pm2 start server/index.js --name masterxiao-ai",
+    "pm2:restart": "pm2 restart masterxiao-ai",
+    "pm2:stop": "pm2 stop masterxiao-ai",
+    "pm2:logs": "pm2 logs masterxiao-ai"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "vite": "^7.2.4"
   },
   "dependencies": {
+    "axios": "^1.13.4",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "flatpickr": "^4.6.13",
+    "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.5",
+    "sql.js": "^1.13.0",
     "uuid": "^13.0.0"
   }
 }

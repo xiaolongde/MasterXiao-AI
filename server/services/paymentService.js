@@ -65,7 +65,7 @@ async function generateAlipayQRCode(orderId, amount, productName) {
     };
     */
 
-    console.log('⚠️ 支付宝支付需要配置商户信息');
+    console.log(`[${global.getTimestamp()}] ⚠️ 支付宝支付需要配置商户信息`);
     throw new Error('支付宝支付暂未配置');
 }
 
@@ -96,7 +96,7 @@ async function generateWechatQRCode(orderId, amount, productName) {
     };
     */
 
-    console.log('⚠️ 微信支付需要配置商户信息');
+    console.log(`[${global.getTimestamp()}] ⚠️ 微信支付需要配置商户信息`);
     throw new Error('微信支付暂未配置');
 }
 

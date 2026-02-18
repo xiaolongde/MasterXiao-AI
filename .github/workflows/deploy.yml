@@ -1,0 +1,23 @@
+name: Deploy to Tencent Cloud
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            export DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+            export PM2_APP_NAME="${{ secrets.PM2_APP_NAME }}"
+            export BRANCH=main
+            bash "$DEPLOY_PATH/scripts/deploy.sh"

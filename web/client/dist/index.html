@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#8B7FD8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- SEO -->
+  <title>匹配游戏 - 趣味性格测试平台</title>
+  <meta name="description" content="匹配游戏提供感情匹配、职场关系、城市发展等多维度趣味性格测试服务，帮你了解人际关系契合度，仅供娱乐参考。">
+  <meta name="keywords" content="感情匹配,职场关系,性格测试,趣味分析,契合度测试,城市匹配,人际关系,娱乐测试">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="匹配游戏 - 趣味性格测试">
+  <meta property="og:description" content="发现你的性格契合度，探索人际关系的奥秘。仅供娱乐参考。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/og-image.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/vite.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <!-- 预加载字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script type="module" crossorigin src="/assets/index-j2ACS3BF.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-LZniho18.css">
+</head>
+
+<body>
+  <!-- 应用容器 -->
+  <div id="app">
+    <!-- 加载状态 -->
+    <div class="loading-screen">
+      <div class="loading-content">
+        <div class="loading-icon">✨</div>
+        <div class="loading-text">匹配游戏</div>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 加载屏样式 -->
+  <style>
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #E8D5FF 0%, #FFE5F0 50%, #E5F0FF 100%);
+    }
+
+    .loading-content {
+      text-align: center;
+    }
+
+    .loading-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    .loading-text {
+      font-family: 'Outfit', -apple-system, sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: #8B7FD8;
+      margin-bottom: 16px;
+    }
+
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .loading-dots span {
+      width: 8px;
+      height: 8px;
+      background: #8B7FD8;
+      border-radius: 50%;
+      animation: loadingDot 1.4s ease-in-out infinite;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes loadingDot {
+
+      0%,
+      60%,
+      100% {
+        transform: scale(0.6);
+        opacity: 0.4;
+      }
+
+      30% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+
+  <!-- 主脚本 -->
+</body>
+
+</html>

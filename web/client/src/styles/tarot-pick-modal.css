@@ -1,0 +1,558 @@
+/* ========== 默念提醒浮层 ========== */
+.pick-remind-toast {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, rgba(155, 109, 255, 0.95), rgba(197, 156, 255, 0.95));
+    color: #ffd700;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 24px rgba(155, 109, 255, 0.5);
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    backdrop-filter: blur(10px);
+}
+
+.pick-remind-toast--show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.pick-remind-toast__icon {
+    font-size: 22px;
+    animation: remind-pulse 1.2s ease-in-out infinite;
+}
+
+.pick-remind-toast__text {
+    color: #ffd700;
+    text-shadow: 0 1px 6px rgba(255, 215, 0, 0.4), 0 1px 4px rgba(0,0,0,0.2);
+}
+
+@keyframes remind-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* ========== 抽牌页布局 ========== */
+.tarot-pick-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #f3eaff 0%, #e8dff5 40%, #f0e6ff 100%);
+    overflow: hidden;
+}
+
+.tarot-pick-page .page-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.pick-page-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    padding: 0 16px;
+    /* 底部不留额外空间，让viewport延伸到接近按钮位置 */
+    padding-bottom: 0;
+}
+
+/* ========== 槽位栏 ========== */
+.pick-slots-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0 4px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.pick-slot {
+    width: 52px;
+    height: 72px;
+    border: 2px dashed rgba(155, 109, 255, 0.35);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.pick-slot--filled {
+    border: 2px solid rgba(155, 109, 255, 0.6);
+    background: rgba(155, 109, 255, 0.08);
+    box-shadow: 0 0 12px rgba(155, 109, 255, 0.15);
+}
+
+.pick-slot--reversed {
+    border-color: rgba(197, 156, 255, 0.6);
+}
+
+.pick-slot__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pick-slot__label {
+    font-size: 12px;
+    color: rgba(100, 70, 150, 0.5);
+    font-weight: 500;
+}
+
+.pick-slot__filled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
+}
+
+.pick-slot__front {
+    background: linear-gradient(145deg, rgba(155, 109, 255, 0.12), rgba(197, 156, 255, 0.08));
+    border-radius: 8px;
+}
+
+.pick-slot__back {
+    background: linear-gradient(145deg, rgba(197, 156, 255, 0.12), rgba(155, 109, 255, 0.08));
+    border-radius: 8px;
+}
+
+.pick-slot__symbol {
+    font-size: 24px;
+}
+
+.pick-slot__name {
+    font-size: 10px;
+    color: rgba(100, 70, 150, 0.8);
+    text-align: center;
+    line-height: 1.2;
+    padding: 0 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 48px;
+    font-weight: 500;
+}
+
+/* ========== 提示栏 ========== */
+.pick-hint-bar {
+    padding: 4px 0 4px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.pick-hint-text {
+    font-size: 22px;
+    font-weight: 500;
+    color: rgba(120, 80, 170, 0.7);
+    letter-spacing: 1px;
+}
+
+/* ========== 牌轮区域 ========== */
+.pick-wheel-viewport {
+    flex: 1;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+}
+
+.pick-wheel-viewport:active {
+    cursor: grabbing;
+}
+
+.pick-wheel {
+    position: absolute;
+    width: 0;
+    height: 0;
+    /* 圆心在右侧，圆环左边框距离页面左侧约20vw */
+    left: calc(20vw + var(--wheel-radius, 250px));
+    /* 圆心垂直居中于viewport */
+    top: 50%;
+    transition: none;
+}
+
+/* ========== 牌轮上的单张牌 ========== */
+.wheel-card {
+    position: absolute;
+    width: 50px;
+    height: 76px;
+    left: -25px;
+    top: -38px;
+    transform-origin: center center;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.15s ease;
+}
+
+.wheel-card:hover {
+    filter: brightness(1.2) drop-shadow(0 0 8px rgba(155, 109, 255, 0.5));
+    z-index: 10;
+}
+
+.wheel-card:active {
+    filter: brightness(1.4);
+}
+
+.wheel-card__face {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(145deg, #2a1854, #1a0e3a);
+    border: 1.5px solid rgba(155, 109, 255, 0.4);
+    box-shadow:
+        0 2px 8px rgba(20, 10, 40, 0.3),
+        inset 0 0 10px rgba(155, 109, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.wheel-card__face::before {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: rgba(212, 175, 55, 0.5);
+    text-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
+}
+
+.wheel-card__face::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px; right: 3px; bottom: 3px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 4px;
+}
+
+.wheel-card--drawn {
+    opacity: 0.25;
+    pointer-events: none;
+    filter: grayscale(0.7);
+}
+
+/* ========== 底部按钮栏 ========== */
+.pick-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 24px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+}
+
+.pick-bottom-bar .pick-next-btn {
+    max-width: 420px;
+    width: 100%;
+}
+
+.pick-next-btn {
+    border-radius: 50px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding: 14px 0;
+}
+
+/* ========== 抽牌结果弹框 ========== */
+.pick-card-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1000;
+    background: rgba(20, 10, 40, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: background 0.4s ease;
+}
+
+.pick-card-modal-overlay--show {
+    pointer-events: auto;
+    background: rgba(20, 10, 40, 0.75);
+    backdrop-filter: blur(6px);
+}
+
+.pick-card-modal {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+    transform: scale(0.3) rotate(-15deg);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pick-card-modal-overlay--animate .pick-card-modal {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+.pick-card-modal-overlay--closing .pick-card-modal {
+    opacity: 0;
+    transform: scale(0.5) rotate(10deg);
+    transition-duration: 0.3s;
+}
+
+/* 光晕 */
+.pick-card-modal__glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 280px; height: 280px;
+    transform: translate(-50%, -60%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(197, 156, 255, 0.5) 0%, rgba(155, 109, 255, 0.2) 40%, transparent 70%);
+    animation: glow-breathe 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes glow-breathe {
+    0%, 100% { transform: translate(-50%, -60%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -60%) scale(1.15); opacity: 1; }
+}
+
+/* 粒子容器 */
+.pick-card-modal__particles {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+    width: 0; height: 0;
+    pointer-events: none;
+}
+
+.pick-particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particle-burst-simple 1.2s ease-out forwards;
+}
+
+@keyframes particle-burst-simple {
+    0% {
+        transform: translate(0, 0) scale(0);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--tx, 50px), var(--ty, -50px)) scale(0);
+        opacity: 0;
+    }
+}
+
+/* 卡牌 */
+.pick-card-modal__card {
+    width: 180px; height: 260px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #2a1854, #1a0e3a);
+    border: 2px solid rgba(197, 156, 255, 0.6);
+    box-shadow:
+        0 0 30px rgba(155, 109, 255, 0.4),
+        0 0 60px rgba(155, 109, 255, 0.15),
+        inset 0 0 20px rgba(155, 109, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    animation: card-modal-float 3s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.pick-card-modal__card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(
+        transparent,
+        rgba(197, 156, 255, 0.15),
+        transparent,
+        rgba(255, 215, 0, 0.1),
+        transparent
+    );
+    animation: card-modal-shimmer 4s linear infinite;
+}
+
+@keyframes card-modal-shimmer {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes card-modal-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.pick-card-modal__card--reversed {
+    animation: card-modal-float-rev 3s ease-in-out infinite;
+}
+
+@keyframes card-modal-float-rev {
+    0%, 100% { transform: rotate(180deg) translateY(0); }
+    50% { transform: rotate(180deg) translateY(-8px); }
+}
+
+.pick-card-modal__face {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pick-card-modal__card-icon {
+    font-size: 72px;
+    color: #ffd700;
+    text-shadow: 0 0 24px rgba(255, 215, 0, 0.6);
+}
+
+.pick-card-modal__card-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+    margin-top: 10px;
+    letter-spacing: 3px;
+}
+
+.pick-card-modal__card--reversed .pick-card-modal__card-icon {
+    color: #c59cff;
+    text-shadow: 0 0 20px rgba(197, 156, 255, 0.6);
+}
+
+.pick-card-modal__card--reversed .pick-card-modal__card-name {
+    color: rgba(220, 200, 255, 0.9);
+}
+
+/* 去掉之前的 symbol/position/label 样式 */
+.pick-card-modal__symbol,
+.pick-card-modal__position,
+.pick-card-modal__label {
+    display: none;
+}
+
+/* 信息区 */
+.pick-card-modal__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+}
+
+.pick-card-modal__step {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.pick-card-modal__slot-label {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 4px;
+}
+
+.pick-card-modal__orientation {
+    font-size: 14px;
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.15);
+    padding: 3px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.pick-card-modal__orientation--reversed {
+    color: #c59cff;
+    background: rgba(197, 156, 255, 0.15);
+    border-color: rgba(197, 156, 255, 0.3);
+}
+
+/* 隐藏不需要的爻信息 */
+.pick-card-modal__yao-name {
+    display: none;
+}
+
+/* 按钮区 */
+.pick-card-modal__buttons {
+    display: flex;
+    gap: 20px;
+    z-index: 2;
+    margin-top: 4px;
+}
+
+.pick-card-modal__btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 1px;
+}
+
+.pick-card-modal__btn--retry {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(4px);
+}
+
+.pick-card-modal__btn--retry:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.pick-card-modal__btn--confirm {
+    background: linear-gradient(135deg, #9b6dff, #c59cff);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(155, 109, 255, 0.5);
+}
+
+.pick-card-modal__btn--confirm:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 10px rgba(155, 109, 255, 0.4);
+}
+
+/* ========== 牌翻转动画 ========== */
+.wheel-card--flipping .wheel-card__face {
+    animation: flip-glow 0.4s ease-out;
+}
+
+@keyframes flip-glow {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(2) drop-shadow(0 0 15px rgba(197, 156, 255, 0.8)); }
+    100% { filter: brightness(1.2) drop-shadow(0 0 8px rgba(197, 156, 255, 0.4)); }
+}

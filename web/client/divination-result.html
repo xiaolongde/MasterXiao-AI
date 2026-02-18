@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六爻解析结果 - 测试页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #7b2ff7 0%, #4c1d95 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 问题卡片 */
+        .question-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-label {
+            font-size: 12px;
+            color: #999;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            color: #333;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .date-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 卦象区域 */
+        .gua-section {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .gua-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .gua-title {
+            font-size: 12px;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .gua-name {
+            font-size: 22px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .gua-palace {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .gua-diagram {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .yao-line {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12px;
+            gap: 8px;
+        }
+
+        .yao-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .yao-line.shi,
+        .yao-line.ying {
+            background: #e3f2fd;
+            font-weight: bold;
+        }
+
+        .yao-liushen {
+            font-size: 11px;
+            width: 36px;
+            color: #9c27b0;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .yao-symbol {
+            font-size: 14px;
+            width: 50px;
+            text-align: center;
+            color: #333;
+            font-family: monospace;
+            letter-spacing: 2px;
+            flex-shrink: 0;
+        }
+
+        .yao-info {
+            flex: 1;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .yao-tag {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .shi-tag {
+            background: #667eea;
+            color: #fff;
+        }
+
+        .ying-tag {
+            background: #4caf50;
+            color: #fff;
+        }
+
+        .gua-ci {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* 动爻说明 */
+        .moving-info {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .moving-text {
+            color: #333;
+            font-size: 14px;
+        }
+
+        /* AI解卦区域 */
+        .ai-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* 视图切换 */
+        .view-mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .mode-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* AI响应 */
+        .ai-response {
+            margin-top: 20px;
+            background: #f0f7ff;
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid #667eea;
+        }
+
+        .version-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #d0d0d0;
+        }
+
+        .version-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .version-section.professional {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 3px solid #667eea;
+        }
+
+        .version-section.simple {
+            background: rgba(76, 175, 80, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 3px solid #4caf50;
+        }
+
+        .response-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .professional .response-title {
+            color: #667eea;
+        }
+
+        .simple .response-title {
+            color: #4caf50;
+        }
+
+        .response-content {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        /* 免责声明 */
+        .disclaimer {
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 16px 24px;
+            line-height: 1.6;
+        }
+
+        /* 底部按钮 */
+        .bottom-buttons {
+            display: flex;
+            gap: 12px;
+            padding: 16px 0;
+        }
+
+        .btn-restart {
+            flex: 1;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-restart:hover {
+            background: #fff;
+            transform: translateY(-2px);
+        }
+
+        .btn-share {
+            flex: 1;
+            height: 48px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: #fff;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-share:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 600px) {
+            .gua-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- 动态内容将在这里渲染 -->
+        <div class="loading" style="text-align: center; padding: 60px; color: white;">
+            <p>正在加载解读结果...</p>
+        </div>
+    </div>
+
+    <script>
+        // 页面状态
+        let viewMode = 'simple'; // 'simple' | 'professional' | 'both'
+        let resultData = null;
+
+        // 从 JSON 文件加载数据
+        async function loadResultData() {
+            try {
+                const response = await fetch('/testResult/divinationResult.json');
+                resultData = await response.json();
+                
+                if (resultData.success && resultData.data) {
+                    renderResult(resultData.data);
+                } else {
+                    document.getElementById('app').innerHTML = '<p style="color: white; text-align: center;">加载失败：数据格式错误</p>';
+                }
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                document.getElementById('app').innerHTML = '<p style="color: white; text-align: center;">加载失败：' + error.message + '</p>';
+            }
+        }
+
+        // 从 aiPrompt 提取信息
+        function extractInfoFromPrompt(prompt) {
+            const info = {
+                question: '',
+                lunarDate: '',
+                benGuaInfo: null,
+                yaos: []
+            };
+
+            // 提取问题
+            const questionMatch = prompt.match(/我要问"([^"]+)"的问题/);
+            if (questionMatch) {
+                info.question = questionMatch[1];
+            }
+
+            // 提取农历日期
+            const dateMatch = prompt.match(/在农历([^\s]+)问事/);
+            if (dateMatch) {
+                info.lunarDate = dateMatch[1];
+            }
+
+            // 提取本卦信息
+            const benGuaMatch = prompt.match(/得到([^（]+)（([^，]+)，属([^）]+)）为本卦/);
+            if (benGuaMatch) {
+                info.benGuaInfo = {
+                    name: benGuaMatch[1],
+                    palace: benGuaMatch[2],
+                    wuxing: benGuaMatch[3]
+                };
+            }
+
+            // 提取卦辞
+            const guaCiMatch = prompt.match(/【卦辞】([^\n]+)/);
+            if (guaCiMatch && info.benGuaInfo) {
+                info.benGuaInfo.info = guaCiMatch[1];
+            }
+
+            // 提取世应信息
+            const shiYingMatch = prompt.match(/世爻在第(\d)爻，应爻在第(\d)爻/);
+            if (shiYingMatch && info.benGuaInfo) {
+                info.benGuaInfo.shi = parseInt(shiYingMatch[1]);
+                info.benGuaInfo.ying = parseInt(shiYingMatch[2]);
+            }
+
+            // 提取六爻信息
+            const yaoPattern = /(上爻|五爻|四爻|三爻|二爻|初爻)：([^\s]+)\s+(阳|阴)爻，([^（\n]+)/g;
+            let match;
+            while ((match = yaoPattern.exec(prompt)) !== null) {
+                info.yaos.push({
+                    position: match[1],
+                    liuShen: match[2],
+                    type: match[3],
+                    info: match[4].trim()
+                });
+            }
+
+            return info;
+        }
+
+        // 渲染结果页面
+        function renderResult(data) {
+            const info = extractInfoFromPrompt(data.aiPrompt || '');
+            const hasMovingYao = (data.aiPrompt || '').includes('动爻') && !(data.aiPrompt || '').includes('无动爻');
+
+            const showProfessional = viewMode === 'professional' || viewMode === 'both';
+            const showSimple = viewMode === 'simple' || viewMode === 'both';
+
+            let html = `
+                <!-- 问题显示 -->
+                <div class="question-card">
+                    <span class="question-label">所问事项</span>
+                    <span class="question-text">${info.question || '未知问题'}</span>
+                    <span class="date-text">${info.lunarDate || ''}</span>
+                </div>
+
+                <!-- 卦象展示区域 -->
+                ${info.benGuaInfo ? renderGuaSection(info) : ''}
+
+                <!-- 动爻说明 -->
+                <div class="moving-info">
+                    <span class="moving-text">${hasMovingYao ? '有动爻' : '静卦（无动爻）'}</span>
+                </div>
+
+                <!-- 解读区域 -->
+                <div class="ai-section">
+                    <div class="section-title">🔮 解读结果</div>
+                    
+                    <!-- 视图切换 -->
+                    <div class="view-mode-tabs">
+                        <button class="mode-tab ${viewMode === 'simple' ? 'active' : ''}" onclick="switchMode('simple')">💡 通俗版</button>
+                        <button class="mode-tab ${viewMode === 'professional' ? 'active' : ''}" onclick="switchMode('professional')">📚 专业版</button>
+                        <button class="mode-tab ${viewMode === 'both' ? 'active' : ''}" onclick="switchMode('both')">📖 双版本</button>
+                    </div>
+
+                    <!-- AI响应结果 -->
+                    <div class="ai-response">
+                        ${showProfessional ? `
+                            <div class="version-section professional">
+                                <div class="response-title">📚 专业版解读</div>
+                                <div class="response-content">${escapeHtml(data.professionalVersion || data.result)}</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${showSimple ? `
+                            <div class="version-section simple">
+                                <div class="response-title">💡 通俗版解读</div>
+                                <div class="response-content">${escapeHtml(data.simpleVersion || data.result)}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- 免责声明 -->
+                <div class="disclaimer">
+                    仅供娱乐参考，不作为任何决策依据
+                </div>
+
+                <!-- 底部按钮 -->
+                <div class="bottom-buttons">
+                    <button class="btn-restart" onclick="location.reload()">🔄 刷新页面</button>
+                    <button class="btn-share" onclick="shareResult()">📤 分享结果</button>
+                </div>
+            `;
+
+            document.getElementById('app').innerHTML = html;
+        }
+
+        // 渲染卦象区域
+        function renderGuaSection(info) {
+            return `
+                <div class="gua-section">
+                    <div class="gua-card">
+                        <div class="gua-title">本卦</div>
+                        <div class="gua-name">${info.benGuaInfo.name || ''}</div>
+                        <div class="gua-palace">${info.benGuaInfo.palace || ''} · ${info.benGuaInfo.wuxing || ''}</div>
+                        
+                        <div class="gua-diagram">
+                            ${renderYaoLines(info)}
+                        </div>
+                        
+                        <div class="gua-ci">${info.benGuaInfo.info || ''}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染六爻
+        function renderYaoLines(info) {
+            if (!info.yaos || info.yaos.length === 0) {
+                return '<div style="text-align: center; color: #999; padding: 16px;">暂无六爻详细信息</div>';
+            }
+
+            return info.yaos.map((yao, index) => {
+                const yaoPosition = 6 - index;
+                const isShi = info.benGuaInfo?.shi === yaoPosition;
+                const isYing = info.benGuaInfo?.ying === yaoPosition;
+                const symbol = yao.type === '阳' ? '▬▬▬' : '▬ ▬';
+
+                return `
+                    <div class="yao-line ${isShi ? 'shi' : ''} ${isYing ? 'ying' : ''}">
+                        <span class="yao-liushen">${yao.liuShen || ''}</span>
+                        <span class="yao-symbol">${symbol}</span>
+                        <span class="yao-info">${yao.info || ''}</span>
+                        ${isShi ? '<span class="yao-tag shi-tag">世</span>' : ''}
+                        ${isYing ? '<span class="yao-tag ying-tag">应</span>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 切换视图模式
+        function switchMode(mode) {
+            viewMode = mode;
+            if (resultData && resultData.data) {
+                renderResult(resultData.data);
+            }
+        }
+
+        // HTML 转义
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 分享结果
+        function shareResult() {
+            if (!resultData || !resultData.data) return;
+            
+            const info = extractInfoFromPrompt(resultData.data.aiPrompt || '');
+            const shareText = `🔮 六爻解读结果\n\n问：${info.question}\n\n${resultData.data.simpleVersion || resultData.data.result}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '六爻解读结果',
+                    text: shareText
+                }).catch(err => {
+                    console.log('分享取消:', err);
+                    copyToClipboard(shareText);
+                });
+            } else {
+                copyToClipboard(shareText);
+            }
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('结果已复制到剪贴板，可以粘贴分享');
+            }).catch(err => {
+                console.error('复制失败:', err);
+            });
+        }
+
+        // 页面加载时执行
+        loadResultData();
+    </script>
+</body>
+</html>

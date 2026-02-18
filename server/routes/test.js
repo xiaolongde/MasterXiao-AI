@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { asyncHandler, AppError } from '../middleware/errorHandler.js';
 import { authenticate, optionalAuth } from '../middleware/auth.js';
 import { tests, users } from '../services/dataStore.js';
+import { getNowLocal } from '../database/index.js';
 
 const router = express.Router();
 
@@ -31,7 +32,7 @@ router.post('/create', optionalAuth, asyncHandler(async (req, res) => {
         hexagram: hexagram || null,
         status: 'pending', // pending, analyzing, completed, paid
         result: null,
-        createdAt: new Date().toISOString(),
+        createdAt: getNowLocal(),
         completedAt: null
     };
 
@@ -119,15 +120,17 @@ router.post('/:id/complete', asyncHandler(async (req, res) => {
 
     test.status = 'completed';
     test.result = result;
-    test.completedAt = new Date().toISOString();
+    test.completedAt = getNowLocal();
 
     tests.set(id, test);
 
     // 更新用户测试次数
     if (test.userId) {
-        const user = Array.from(users.values()).find(u => u.id === test.userId);
+        const allUsers = users.values();
+        const user = allUsers.find(u => u.id === test.userId);
         if (user) {
             user.testCount = (user.testCount || 0) + 1;
+            users.set(user.phone, user);
         }
     }
 

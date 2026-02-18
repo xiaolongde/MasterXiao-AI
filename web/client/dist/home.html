@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#8B7FD8">
+  <title>趣味性格匹配平台 - 官方网站</title>
+  <meta name="description" content="趣味性格匹配平台提供感情匹配、职场关系、合作分析等多维度趣味性格测试服务，通过生日特质分析和直觉塔罗解读，帮您探索人际关系的奥秘。仅供娱乐参考。">
+  <meta name="keywords" content="趣味性格匹配平台,性格测试,感情匹配,职场关系,合作分析,塔罗测试,契合度测试,娱乐测试">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      color: #333; background: #fff; line-height: 1.6; overflow-x: hidden;
+    }
+    a { color: #8B7FD8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; height: auto; }
+
+    /* ===== Header ===== */
+    .header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+      box-shadow: 0 1px 8px rgba(139,127,216,0.1);
+      transition: box-shadow 0.3s;
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; color: #8B7FD8; }
+    .logo-icon { font-size: 28px; }
+    .nav { display: flex; gap: 28px; list-style: none; }
+    .nav a { color: #555; font-size: 15px; font-weight: 500; transition: color 0.2s; }
+    .nav a:hover { color: #8B7FD8; text-decoration: none; }
+
+    /* ===== Hero ===== */
+    .hero {
+      padding: 140px 24px 80px;
+      background: linear-gradient(160deg, #E8D5FF 0%, #FFE5F0 40%, #E5F0FF 100%);
+      text-align: center;
+    }
+    .hero-icon { font-size: 64px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+    .hero h1 { font-size: 42px; font-weight: 800; color: #4A3B78; margin-bottom: 12px; }
+    .hero p { font-size: 18px; color: #6B5B8D; max-width: 560px; margin: 0 auto 32px; }
+    .hero-btn {
+      display: inline-block; padding: 14px 48px; border-radius: 50px;
+      background: linear-gradient(135deg, #8B7FD8, #B794F6);
+      color: #fff; font-size: 17px; font-weight: 600;
+      box-shadow: 0 4px 20px rgba(139,127,216,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(139,127,216,0.5); text-decoration: none; }
+    .hero-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 32px; }
+    .hero-tag {
+      padding: 6px 16px; border-radius: 20px;
+      background: rgba(255,255,255,0.7); color: #6B5B8D; font-size: 13px;
+      border: 1px solid rgba(139,127,216,0.2);
+    }
+    @keyframes float { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-12px); } }
+
+    /* ===== Section ===== */
+    .section { padding: 80px 24px; }
+    .section--gray { background: #f8f6ff; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-title {
+      text-align: center; font-size: 32px; font-weight: 700; color: #4A3B78; margin-bottom: 12px;
+    }
+    .section-subtitle {
+      text-align: center; font-size: 16px; color: #888; margin-bottom: 48px;
+    }
+
+    /* ===== Features ===== */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: #fff; border-radius: 16px; padding: 32px 28px;
+      box-shadow: 0 2px 16px rgba(139,127,216,0.08);
+      border: 1px solid rgba(139,127,216,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(139,127,216,0.15); }
+    .feature-card__icon { font-size: 40px; margin-bottom: 16px; }
+    .feature-card__title { font-size: 20px; font-weight: 700; color: #4A3B78; margin-bottom: 8px; }
+    .feature-card__desc { font-size: 14px; color: #777; line-height: 1.7; }
+
+    /* ===== Services ===== */
+    .services-list { display: flex; flex-direction: column; gap: 40px; }
+    .service-item {
+      display: flex; align-items: center; gap: 40px;
+      background: #fff; border-radius: 20px; padding: 40px;
+      box-shadow: 0 2px 16px rgba(139,127,216,0.06);
+    }
+    .service-item:nth-child(even) { flex-direction: row-reverse; }
+    .service-icon { font-size: 72px; flex-shrink: 0; width: 120px; text-align: center; }
+    .service-content { flex: 1; }
+    .service-content h3 { font-size: 22px; font-weight: 700; color: #4A3B78; margin-bottom: 10px; }
+    .service-content p { font-size: 15px; color: #666; line-height: 1.8; }
+    .service-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .service-tag {
+      padding: 4px 12px; border-radius: 12px; font-size: 12px;
+      background: linear-gradient(135deg, #f0ebff, #ffe8f3);
+      color: #7C6CB0;
+    }
+
+    /* ===== How it works ===== */
+    .steps { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+    .step {
+      flex: 1; min-width: 200px; max-width: 280px;
+      text-align: center; padding: 32px 20px;
+      background: #fff; border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(139,127,216,0.08);
+      position: relative;
+    }
+    .step__num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, #8B7FD8, #B794F6);
+      color: #fff; font-size: 20px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .step__title { font-size: 17px; font-weight: 600; color: #4A3B78; margin-bottom: 8px; }
+    .step__desc { font-size: 13px; color: #888; }
+
+    /* ===== Disclaimer ===== */
+    .disclaimer-box {
+      background: #fffbe6; border: 1px solid #ffe58f; border-radius: 12px;
+      padding: 24px 28px; margin-top: 48px;
+    }
+    .disclaimer-box h4 { color: #d48806; font-size: 16px; margin-bottom: 8px; }
+    .disclaimer-box p { font-size: 13px; color: #8c6d1f; line-height: 1.8; }
+
+    /* ===== Footer ===== */
+    .footer {
+      background: #2D1B4E; color: rgba(255,255,255,0.7); padding: 60px 24px 30px;
+    }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px; margin-bottom: 40px;
+    }
+    .footer h4 { color: #fff; font-size: 16px; margin-bottom: 16px; }
+    .footer p { font-size: 13px; line-height: 1.8; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 8px; }
+    .footer-links a { color: rgba(255,255,255,0.6); font-size: 13px; }
+    .footer-links a:hover { color: #B794F6; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;
+      text-align: center; font-size: 12px; color: rgba(255,255,255,0.4);
+    }
+    .footer-bottom a { color: rgba(255,255,255,0.5); }
+
+    /* ===== About Section ===== */
+    .about-content { display: flex; gap: 40px; align-items: flex-start; }
+    .about-text { flex: 1; }
+    .about-text p { font-size: 15px; color: #555; line-height: 1.9; margin-bottom: 16px; }
+    .about-info {
+      flex-shrink: 0; width: 320px;
+      background: #f8f6ff; border-radius: 16px; padding: 28px;
+    }
+    .about-info h4 { font-size: 16px; color: #4A3B78; margin-bottom: 16px; }
+    .about-info-item { display: flex; gap: 10px; margin-bottom: 12px; font-size: 14px; color: #555; }
+    .about-info-item span:first-child { color: #8B7FD8; flex-shrink: 0; }
+
+    /* ===== Agreement ===== */
+    .agreement-section { background: #fafafa; }
+    .agreement-content {
+      max-width: 800px; margin: 0 auto;
+      background: #fff; border-radius: 16px; padding: 40px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+    }
+    .agreement-content h3 { font-size: 18px; color: #4A3B78; margin: 24px 0 12px; }
+    .agreement-content h3:first-child { margin-top: 0; }
+    .agreement-content p, .agreement-content li { font-size: 14px; color: #555; line-height: 1.9; }
+    .agreement-content ul { padding-left: 20px; margin-bottom: 12px; }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 768px) {
+      .header-inner { padding: 12px 16px; }
+      .logo { font-size: 17px; }
+      .nav { gap: 16px; }
+      .nav a { font-size: 13px; }
+      .hero { padding: 120px 20px 60px; }
+      .hero h1 { font-size: 28px; }
+      .hero p { font-size: 15px; }
+      .section { padding: 50px 16px; }
+      .section-title { font-size: 24px; }
+      .service-item { flex-direction: column !important; padding: 28px 20px; gap: 20px; }
+      .service-icon { font-size: 48px; width: auto; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .about-content { flex-direction: column; }
+      .about-info { width: 100%; }
+      .steps { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">✨</span>
+      <span>趣味性格匹配平台</span>
+    </div>
+    <ul class="nav">
+      <li><a href="#features">产品功能</a></li>
+      <li><a href="#services">服务介绍</a></li>
+      <li><a href="#about">关于我们</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="hero-icon">✨</div>
+  <h1>趣味性格匹配平台</h1>
+  <p>多维度趣味性格测试与匹配分析服务，探索人际关系的奥秘，发现你的性格契合度</p>
+  <!-- <a href="javascript:void(0)" class="hero-btn" style="cursor:default;">立即体验</a> -->
+</section>
+
+<!-- ===== 产品功能 ===== -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <h2 class="section-title">产品功能</h2>
+    <p class="section-subtitle">丰富的趣味测试场景，多种分析维度，满足不同需求</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-card__icon">🎯</div>
+        <div class="feature-card__title">多场景匹配分析</div>
+        <div class="feature-card__desc">涵盖感情匹配、合作关系、职场分析、宠物匹配等多种趣味测试场景，全方位探索人际关系中的性格契合度。</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">🔮</div>
+        <div class="feature-card__title">双重测试方式</div>
+        <div class="feature-card__desc">支持生日特质分析和直觉塔罗两种趣味测试方式。生日匹配基于传统文化中的生辰特质，塔罗测试凭借直觉翻牌解读。</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">🤖</div>
+        <div class="feature-card__title">多维度智能解读</div>
+        <div class="feature-card__desc">基于多维度算法模型，对测试数据进行综合分析，生成详细的个性化匹配报告，提供深入的性格解读与建议。</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">📊</div>
+        <div class="feature-card__title">详细分析报告</div>
+        <div class="feature-card__desc">报告包含性格特质分析、契合度评分、互补性评估、相处建议等多个维度，支持一键分享和导出长图保存。</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">📱</div>
+        <div class="feature-card__title">移动端适配</div>
+        <div class="feature-card__desc">完美适配手机浏览器，随时随地进行趣味测试，流畅的交互体验。</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">🔒</div>
+        <div class="feature-card__title">隐私安全</div>
+        <div class="feature-card__desc">用户数据加密存储，不收集敏感个人信息，测试结果仅供本人查看，保障用户隐私安全。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 服务介绍 ===== -->
+<section class="section section--gray" id="services">
+  <div class="section-inner">
+    <h2 class="section-title">服务介绍</h2>
+    <p class="section-subtitle">基于传统文化与多维度分析技术的趣味性格分析服务</p>
+    <div class="services-list">
+      <div class="service-item">
+        <div class="service-icon">💑</div>
+        <div class="service-content">
+          <h3>感情匹配</h3>
+          <p>通过生日特质或直觉塔罗分析，深入了解你与TA之间的性格契合度，探索两人性格的互补与摩擦点，提供性格特质分析、互补性评估和相处建议。</p>
+          <div class="service-tags">
+            <span class="service-tag">性格特质分析</span>
+            <span class="service-tag">互补性评估</span>
+            <span class="service-tag">相处建议</span>
+          </div>
+        </div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">🤝</div>
+        <div class="service-content">
+          <h3>合作关系分析</h3>
+          <p>评估你与潜在合作伙伴的契合度，分析合作中可能遇到的挑战与机遇。适用于创业伙伴选择、商业合作评估等场景。</p>
+          <div class="service-tags">
+            <span class="service-tag">合作契合度评分</span>
+            <span class="service-tag">风险预警</span>
+            <span class="service-tag">合作策略建议</span>
+          </div>
+        </div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">💭</div>
+        <div class="service-content">
+          <h3>想法态度解读</h3>
+          <p>通过直觉塔罗测试，探索对方内心的真实想法和对你的态度，帮助你更好地理解他人，促进人际沟通与理解。</p>
+          <div class="service-tags">
+            <span class="service-tag">心理分析</span>
+            <span class="service-tag">态度解读</span>
+            <span class="service-tag">沟通建议</span>
+          </div>
+        </div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">🔮</div>
+        <div class="service-content">
+          <h3>更多趣味测试</h3>
+          <p>还提供宠物匹配、Yes or No 快速决策、二选一分析等多种趣味测试场景。面对犹豫和选择时，给你一个有趣的参考视角。</p>
+          <div class="service-tags">
+            <span class="service-tag">🐾 宠物匹配</span>
+            <span class="service-tag">❓ Yes or No</span>
+            <span class="service-tag">⚖️ 二选一</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 使用流程 ===== -->
+<section class="section">
+  <div class="section-inner">
+    <h2 class="section-title">使用流程</h2>
+    <p class="section-subtitle">简单几步，开启你的趣味性格探索之旅</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div class="step__title">选择测试类型</div>
+        <div class="step__desc">从感情匹配、合作关系、想法态度等多种场景中选择您感兴趣的测试主题</div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div class="step__title">选择测试方式</div>
+        <div class="step__desc">选择生日特质匹配（输入双方生日）或直觉塔罗（凭直觉翻牌）的方式进行测试</div>
+      </div>
+      <div class="step">
+        <div class="step__num">3</div>
+        <div class="step__title">完成支付</div>
+        <div class="step__desc">选择支付方式完成付款，支持支付宝等主流支付渠道，安全便捷</div>
+      </div>
+      <div class="step">
+        <div class="step__num">4</div>
+        <div class="step__title">获取报告</div>
+        <div class="step__desc">多维度实时生成详细的分析报告，可在线查看、分享给好友或导出保存</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 关于我们 ===== -->
+<section class="section" id="about">
+  <div class="section-inner">
+    <h2 class="section-title">关于我们</h2>
+    <p class="section-subtitle">专注趣味性格分析，为用户提供有趣的人际关系探索服务</p>
+    <div class="about-content">
+      <div class="about-text">
+        <p>
+          <strong>趣味性格匹配平台</strong>是一个创新的在线趣味测试服务平台，致力于将传统文化中的性格分析元素与现代人工智能技术相结合，
+          为用户提供多维度、个性化的趣味性格匹配与分析服务。
+        </p>
+        <p>
+          平台涵盖感情匹配、合作关系分析、想法态度解读、宠物匹配等多种测试场景，提供生日特质分析和直觉塔罗两种独特的测试方式。
+          通过多维度分析技术，为每位用户生成详细、有趣的个性化分析报告。
+        </p>
+        <p>
+          我们始终坚持以用户体验为核心，不断优化产品功能和服务质量。同时，我们高度重视用户隐私保护，
+          严格遵守相关法律法规，确保用户数据安全。所有测试内容仅供娱乐参考，我们鼓励用户理性看待测试结果。
+        </p>
+      </div>
+      <div class="about-info">
+        <h4>📋 平台信息</h4>
+        <div class="about-info-item">
+          <span>📌</span>
+          <span>平台名称：趣味性格匹配平台</span>
+        </div>
+        <div class="about-info-item">
+          <span>🏷️</span>
+          <span>服务类型：在线趣味测试服务</span>
+        </div>
+        <div class="about-info-item">
+          <span>💳</span>
+          <span>支付方式：支付宝</span>
+        </div>
+        <div class="about-info-item">
+          <span>📧</span>
+          <span>联系邮箱：support@example.com</span>
+        </div>
+        <div class="about-info-item">
+          <span>🕐</span>
+          <span>客服时间：工作日 9:00-18:00</span>
+        </div>
+        <!-- <div class="about-info-item">
+          <span>📱</span>
+          <span>联系电话：400-XXX-XXXX</span>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 用户协议与隐私政策 ===== -->
+<section class="section agreement-section" id="agreement">
+  <div class="section-inner">
+    <h2 class="section-title">用户协议与隐私政策</h2>
+    <p class="section-subtitle">请在使用本平台服务前仔细阅读以下条款</p>
+    <div class="agreement-content">
+      <h3>一、服务说明</h3>
+      <p>趣味性格匹配平台（以下简称"本平台"）提供基于传统文化元素的在线趣味性格测试与匹配分析服务。本平台所有测试内容均为趣味娱乐性质，不构成任何专业咨询或决策建议。</p>
+
+      <h3>二、用户须知</h3>
+      <ul>
+        <li>用户使用本平台服务即表示已阅读并同意本协议全部条款。</li>
+        <li>用户应年满18周岁，或在监护人同意下使用本平台服务。</li>
+        <li>用户应理性对待测试结果，测试结果仅供娱乐参考。</li>
+        <li>用户不得利用本平台从事任何违法违规活动。</li>
+      </ul>
+
+      <h3>三、付费服务</h3>
+      <ul>
+        <li>本平台提供的付费测试服务为虚拟内容服务，一经购买成功并获得分析报告，不支持无理由退款。</li>
+        <li>如因平台技术原因导致未能正常生成报告，用户可联系客服处理退款。</li>
+        <li>用户通过支付宝完成支付，支付过程由支付宝提供安全保障。</li>
+        <li>平台承诺价格公开透明，不存在隐形消费或自动续费。</li>
+      </ul>
+
+      <h3>四、知识产权</h3>
+      <p>本平台的所有内容，包括但不限于文字、图片、界面设计、程序代码等，均受知识产权法律保护。未经授权，任何人不得复制、传播或以其他方式使用本平台内容。</p>
+
+      <h3>五、隐私政策</h3>
+      <ul>
+        <li><strong>信息收集：</strong>本平台仅收集提供服务所必需的信息（如测试输入的生日信息），不收集身份证号、银行卡号等敏感信息。</li>
+        <li><strong>信息使用：</strong>用户提供的信息仅用于生成测试分析报告，不会用于其他商业目的。</li>
+        <li><strong>信息存储：</strong>用户数据采用加密方式安全存储，仅保留必要的时间期限。</li>
+        <li><strong>信息共享：</strong>本平台不会向任何第三方出售、出租或以其他方式分享用户的个人信息，法律要求除外。</li>
+        <li><strong>用户权利：</strong>用户有权随时请求查看、更正或删除其个人信息，可通过客服邮箱联系我们。</li>
+      </ul>
+
+      <h3>六、免责声明</h3>
+      <ul>
+        <li>本平台提供的测试结果基于趣味算法生成，不具有科学性和准确性保证。</li>
+        <li>用户基于测试结果做出的任何决定，本平台不承担相关责任。</li>
+        <li>因不可抗力因素（如网络故障、服务器故障等）导致的服务中断，本平台不承担赔偿责任，但会尽快恢复服务。</li>
+      </ul>
+
+      <h3>七、协议修改</h3>
+      <p>本平台有权根据业务发展和法律法规变化对本协议进行修改。修改后的协议将在本页面公布，继续使用本平台即视为同意修改后的协议。</p>
+
+      <h3>八、联系方式</h3>
+      <p>如对本协议有任何疑问，请通过以下方式联系我们：</p>
+      <ul>
+        <li>客服邮箱：support@example.com</li>
+        <li>客服时间：工作日 9:00-18:00</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <h4>✨ 趣味性格匹配平台</h4>
+        <p>多维度趣味性格测试与匹配分析服务平台，探索人际关系的奥秘，发现你的性格契合度。所有测试内容仅供娱乐参考，不构成任何决策建议。</p>
+      </div>
+      <div>
+        <h4>产品服务</h4>
+        <ul class="footer-links">
+          <li><a href="#features">产品功能</a></li>
+          <li><a href="#services">服务介绍</a></li>
+          <li><a href="#about">关于我们</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>帮助支持</h4>
+        <ul class="footer-links">
+          <li><a href="#agreement">用户协议</a></li>
+          <li><a href="#agreement">隐私政策</a></li>
+          <li><a href="#about">关于我们</a></li>
+          <li><a href="#about">联系客服</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>联系我们</h4>
+        <ul class="footer-links">
+          <li>📧 support@example.com</li>
+          <li>📱 400-XXX-XXXX</li>
+          <li>🕐 工作日 9:00-18:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        © 2026 趣味性格匹配平台 版权所有 | 
+        <a href="#agreement">用户协议</a> | 
+        <a href="#agreement">隐私政策</a> | 
+        本平台所有测试内容仅供娱乐参考
+      </p>
+      <p style="margin-top: 8px;">
+        <!-- 请替换为您的真实备案号 -->
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">ICP备案号：桂ICP备2026001642号</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

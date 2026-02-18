@@ -1,4 +1,4 @@
-# MasterXiao-AI 开发日志
+# 匹配游戏 开发日志
 
 > 项目开发时间：2026年1月31日
 > 开发工具：Gemini Antigravity AI Coding Assistant
@@ -7,7 +7,7 @@
 
 ## 📋 项目概述
 
-**MasterXiao-AI** 是一个智能命理匹配分析平台，提供感情匹配、职场关系、城市发展等多维度命理分析服务，通过八字三柱和六爻塔罗为用户指引前路。
+**匹配游戏** 是一个智能命理匹配分析平台，提供感情匹配、职场关系、城市发展等多维度命理分析服务，通过八字三柱和六爱塔罗为用户指引前路。
 
 ### 核心功能
 - 10种匹配分析类型
@@ -34,7 +34,7 @@
 npx create-vite@latest ./
 npm install
 git init
-git remote add origin https://github.com/xiaolongde/MasterXiao-AI.git
+git remote add origin https://github.com/xiaolongde/matching-game.git
 git push -u origin main
 ```
 
@@ -269,7 +269,7 @@ export const verificationApi = { ... }
 ## 📁 项目文件结构
 
 ```
-MasterXiao-AI/
+匹配游戏/
 ├── index.html                 # 入口 HTML
 ├── package.json               # 项目配置
 ├── vite.config.js             # Vite 配置

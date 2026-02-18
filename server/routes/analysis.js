@@ -7,6 +7,7 @@ import { asyncHandler, AppError } from '../middleware/errorHandler.js';
 import { optionalAuth } from '../middleware/auth.js';
 import { tests } from '../services/dataStore.js';
 import { analyzeBirthday, analyzeHexagram } from '../services/aiService.js';
+import { getNowLocal } from '../database/index.js';
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.post('/birthday', optionalAuth, asyncHandler(async (req, res) => {
         if (test) {
             test.status = 'completed';
             test.result = result;
-            test.completedAt = new Date().toISOString();
+            test.completedAt = getNowLocal();
             tests.set(testId, test);
         }
     }
@@ -47,13 +48,13 @@ router.post('/birthday', optionalAuth, asyncHandler(async (req, res) => {
 
 /**
  * POST /api/analysis/hexagram
- * 六爻卦象分析
+ * 卡牌符号分析
  */
 router.post('/hexagram', optionalAuth, asyncHandler(async (req, res) => {
     const { testId, hexagram, matchType, question } = req.body;
 
     if (!hexagram) {
-        throw new AppError('请提供卦象信息', 400, 'MISSING_HEXAGRAM');
+        throw new AppError('请提供符号信息', 400, 'MISSING_HEXAGRAM');
     }
 
     // 执行分析
@@ -65,7 +66,7 @@ router.post('/hexagram', optionalAuth, asyncHandler(async (req, res) => {
         if (test) {
             test.status = 'completed';
             test.result = result;
-            test.completedAt = new Date().toISOString();
+            test.completedAt = getNowLocal();
             tests.set(testId, test);
         }
     }
