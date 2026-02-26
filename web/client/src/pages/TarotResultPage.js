@@ -63,8 +63,8 @@ export class TarotResultPage {
             <!-- 按钮栏（内嵌在内容区） -->
             <div class="result-bottom-bar">
               <button class="result-bottom-btn result-bottom-btn--restart" id="btnRestart">
-                <span class="result-bottom-btn-icon">🔄</span>
-                <span>重新开始</span>
+                <span class="result-bottom-btn-icon">🏠</span>
+                <span>回到首页</span>
               </button>
               <button class="result-bottom-btn result-bottom-btn--save" id="btnSave">
                 <span class="result-bottom-btn-icon">💾</span>
