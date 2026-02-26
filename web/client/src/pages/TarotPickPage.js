@@ -12,7 +12,8 @@ import { matchRecordApi } from '../services/api.js';
 import { getSessionId } from '../scripts/state.js';
 import { FULL_DECK } from '../data/tarot.js';
 
-const TOTAL_CARDS = 72;
+const ANGLE_STEP = 3.5;  // 每张牌间隔角度（度）
+const TOTAL_CARDS = Math.ceil(360 / ANGLE_STEP);  // 铺满整圆所需张数（≈103）
 const CARDS_TO_DRAW = 6;
 const SLOT_LABELS = ['目标', '动力', '障碍', '资源', '支持', '结果'];
 
@@ -83,7 +84,7 @@ export class TarotPickPage {
         this.pickedCards = new Array(CARDS_TO_DRAW).fill(null);
         this.isShowingPreview = false;
 
-        // 预洗牌：从78张塔罗牌中打乱，映射到牌轮上72个位置
+        // 预洗牌：先打乱78张，再随机补牌铺满整圆
         this.deckCards = this._shuffleDeck();
 
         this.yaos = [];
@@ -104,25 +105,30 @@ export class TarotPickPage {
     }
 
     /**
-     * 洗牌：打乱78张牌，取前72张映射到牌轮位置
+     * 洗牌：先打乱78张牌全部放入，再从中随机抽取补满整圆
      */
     _shuffleDeck() {
         const deck = [...FULL_DECK];
+        // 洗牌
         for (let i = deck.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [deck[i], deck[j]] = [deck[j], deck[i]];
         }
-        return deck.slice(0, TOTAL_CARDS);
+        // 78张全部使用，不够的从78张里随机补
+        const result = [...deck];
+        while (result.length < TOTAL_CARDS) {
+            result.push(deck[Math.floor(Math.random() * deck.length)]);
+        }
+        return result;
     }
 
     render() {
         if (!this.matchType) return '';
 
-        const angleStep = 360 / TOTAL_CARDS;
         const radius = getWheelRadius();
         let cardsHtml = '';
         for (let i = 0; i < TOTAL_CARDS; i++) {
-            const angle = i * angleStep;
+            const angle = i * ANGLE_STEP;
             cardsHtml += `
                 <div class="wheel-card" data-idx="${i}"
                      style="transform: rotate(${angle}deg) translateY(-${radius}px)">
@@ -507,6 +513,7 @@ export class TarotPickPage {
 
         if (cardElement) {
             cardElement.classList.remove('wheel-card--flipping');
+            cardElement.classList.add('wheel-card--drawn');
         }
 
         this.yaos.push(cardData.yao);

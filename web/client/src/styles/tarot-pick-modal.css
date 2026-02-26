@@ -60,7 +60,7 @@ html:has(.tarot-pick-page) body {
 
 .tarot-pick-page .page-content {
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
 }
@@ -70,7 +70,7 @@ html:has(.tarot-pick-page) body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
     padding: 0 16px;
     padding-bottom: 0;
@@ -179,8 +179,8 @@ html:has(.tarot-pick-page) body {
     flex: 1;
     width: 100%;
     position: relative;
-    /* 只裁右侧溢出，不裁底部：上0 右100% 下120%(超出底部) 左0 */
-    clip-path: inset(0 0 -20% 0);
+    /* 不裁底部，允许牌轮底部完整显示 */
+    clip-path: inset(0 0 -40% 0);
     touch-action: none;
     cursor: grab;
 }
@@ -195,8 +195,8 @@ html:has(.tarot-pick-page) body {
     height: 0;
     /* 圆心在右侧，圆环左边框距离页面左侧约20vw */
     left: calc(20vw + var(--wheel-radius, 250px));
-    /* 圆心垂直居中于viewport，下移75px让底部牌完整显示 */
-    top: calc(50% + 75px);
+    /* 圆心垂直居中于viewport，下移让底部牌完整显示 */
+    top: calc(50% + 90px);
     transition: none;
 }
 
@@ -204,9 +204,9 @@ html:has(.tarot-pick-page) body {
 .wheel-card {
     position: absolute;
     width: 100px;
-    height: 120px;
+    height: 140px;
     left: -50px;
-    top: -60px;
+    top: -70px;
     transform-origin: center center;
     cursor: pointer;
     transition: filter 0.2s ease, transform 0.15s ease;
@@ -225,11 +225,10 @@ html:has(.tarot-pick-page) body {
     width: 100%;
     height: 100%;
     border-radius: 10px;
-    background: linear-gradient(160deg, #1e1845, #15103a, #1a1348);
-    border: 1.5px solid rgba(200, 190, 220, 0.3);
+    background: linear-gradient(160deg, rgb(34,35,58));
+    border: 1px solid #f5f5ef;
     box-shadow:
-        0 2px 8px rgba(10, 5, 30, 0.35),
-        inset 0 0 0 1px rgba(200, 190, 220, 0.06);
+        0 1px 4px rgba(10, 5, 30, 0.4);
     position: relative;
     overflow: hidden;
 }
@@ -238,8 +237,8 @@ html:has(.tarot-pick-page) body {
 .wheel-card__face::before {
     content: '';
     position: absolute;
-    top: 4px; left: 4px; right: 4px; bottom: 4px;
-    border: 1px solid rgba(200, 190, 220, 0.18);
+    top: 5px; left: 5px; right: 5px; bottom: 5px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
     border-radius: 7px;
 }
 
@@ -247,10 +246,10 @@ html:has(.tarot-pick-page) body {
 .wheel-card__face::after {
     content: '';
     position: absolute;
-    top: 4px; left: 4px; right: 4px; bottom: 4px;
+    top: 5px; left: 5px; right: 5px; bottom: 5px;
     background:
-        linear-gradient(to bottom right, transparent calc(50% - 0.4px), rgba(200,190,220,0.15) calc(50% - 0.4px), rgba(200,190,220,0.15) calc(50% + 0.4px), transparent calc(50% + 0.4px)),
-        linear-gradient(to bottom left, transparent calc(50% - 0.4px), rgba(200,190,220,0.15) calc(50% - 0.4px), rgba(200,190,220,0.15) calc(50% + 0.4px), transparent calc(50% + 0.4px));
+        linear-gradient(to bottom right, transparent calc(50% - 0.3px), rgba(255,255,255,0.18) calc(50% - 0.3px), rgba(255,255,255,0.18) calc(50% + 0.3px), transparent calc(50% + 0.3px)),
+        linear-gradient(to bottom left, transparent calc(50% - 0.3px), rgba(255,255,255,0.18) calc(50% - 0.3px), rgba(255,255,255,0.18) calc(50% + 0.3px), transparent calc(50% + 0.3px));
 }
 
 /* 中央菱形装饰 */
@@ -258,27 +257,27 @@ html:has(.tarot-pick-page) body {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     transform: translate(-50%, -50%) rotate(45deg);
-    border: 1px solid rgba(200, 190, 220, 0.2);
-    background: rgba(30, 24, 69, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(20, 16, 58, 0.9);
     z-index: 2;
 }
 
 /* 四角小装饰标记 */
 .wheel-card__corner {
     position: absolute;
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    border: 1px solid rgba(200, 190, 220, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     z-index: 2;
 }
-.wheel-card__corner--tl { top: 7px; left: 7px; }
-.wheel-card__corner--tr { top: 7px; right: 7px; }
-.wheel-card__corner--bl { bottom: 7px; left: 7px; }
-.wheel-card__corner--br { bottom: 7px; right: 7px; }
+.wheel-card__corner--tl { top: 8px; left: 8px; }
+.wheel-card__corner--tr { top: 8px; right: 8px; }
+.wheel-card__corner--bl { bottom: 8px; left: 8px; }
+.wheel-card__corner--br { bottom: 8px; right: 8px; }
 
 .wheel-card--drawn {
     opacity: 0.25;
@@ -405,12 +404,12 @@ html:has(.tarot-pick-page) body {
     height: 500px;
     border-radius: 10px;
     background: linear-gradient(160deg, #1a1730, #141028, #18132e);
-    border: 3px solid #e8e4f0;
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        0 8px 24px rgba(10, 5, 30, 0.4),
+    border: 3px solid #858aad;
+    /* box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.05),
+        0 8px 24px rgba(215, 212, 224, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.03),
-        inset 0 0 30px rgba(60, 50, 100, 0.03);
+        inset 0 0 30px rgba(60, 50, 100, 0.03); */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -494,7 +493,7 @@ html:has(.tarot-pick-page) body {
 .modal-back__inner-border {
     position: absolute;
     top: 12px; left: 12px; right: 12px; bottom: 12px;
-    border: 1px solid #e8e4f0;
+    border: 1px solid #fbfcf0;
     border-radius: 8px;
 }
 
@@ -504,7 +503,7 @@ html:has(.tarot-pick-page) body {
     top: 50%; left: 50%;
     width: 1px;
     height: 80px;
-    background: #e8e4f0;
+    background: #fbfcf0;
     transform-origin: center top;
 }
 .modal-back__radial-line--0 {
@@ -518,7 +517,7 @@ html:has(.tarot-pick-page) body {
     left: 0;
     width: 1px;
     height: 110px;
-    background: #e8e4f0;
+    background: #fbfcf0;
 }
 .modal-back__radial-line--45 {
     transform: translate(-50%, -50%) rotate(45deg);
@@ -542,7 +541,7 @@ html:has(.tarot-pick-page) body {
     position: absolute;
     top: 50%; left: 50%;
     border-radius: 50%;
-    border: 1.5px solid #e8e4f0;
+    border: 1.5px solid #fbfcf0;
 }
 .modal-back__circle--outer {
     width: 170px; height: 170px;
@@ -553,7 +552,7 @@ html:has(.tarot-pick-page) body {
     width: 130px; height: 130px;
     transform: translate(-50%, -50%);
     border-style: dashed;
-    border-color: #ddd8ea;
+    border-color: #fbfcf0;
 }
 
 /* 中央Q字母 */
@@ -564,7 +563,7 @@ html:has(.tarot-pick-page) body {
     font-size: 72px;
     font-weight: 300;
     font-family: 'Georgia', 'Times New Roman', serif;
-    color: #e8e4f0;
+    color: #fbfcf0;
     line-height: 1;
 }
 
@@ -572,7 +571,7 @@ html:has(.tarot-pick-page) body {
 .modal-back__suit {
     position: absolute;
     font-size: 18px;
-    color: #e8e4f0;
+    color: #fbfcf0;
 }
 .modal-back__suit--top {
     top: 22%; left: 50%;
@@ -599,7 +598,7 @@ html:has(.tarot-pick-page) body {
     position: absolute;
     font-size: 20px;
     font-family: 'Georgia', 'Times New Roman', serif;
-    color: #e8e4f0;
+    color: #fbfcf0;
 }
 .modal-back__corner--tl { top: 16px; left: 18px; }
 .modal-back__corner--tr { top: 16px; right: 18px; }
@@ -677,9 +676,7 @@ html:has(.tarot-pick-page) body {
 }
 
 .pick-card-modal__btn--confirm {
-    background: linear-gradient(135deg, #8448cd,
-        #7c60dd,
-        #9a7ee4);
+    background: #6c63ee;
     color: #fff;
     box-shadow: 0 6px 24px rgba(139, 122, 216, 0.45);
 }
