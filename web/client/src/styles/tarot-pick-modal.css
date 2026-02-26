@@ -167,7 +167,7 @@ html:has(.tarot-pick-page) body {
 }
 
 .pick-hint-text {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 500;
     color: rgba(120, 80, 170, 0.7);
     letter-spacing: 1px;
